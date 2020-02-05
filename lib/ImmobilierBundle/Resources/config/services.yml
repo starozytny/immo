@@ -1,0 +1,19 @@
+parameters:
+  directoryExport: '%kernel.project_dir%/data/export'
+
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true
+
+  Shanbo\ImmobilierBundle\:
+    resource: "../../../ImmobilierBundle/*"
+    exclude: "../../../ImmobilierBundle/{Migrations,Tests}"
+
+  Shanbo\ImmobilierBundle\Manager\Import\Import:
+    arguments:
+      $directoryExport: '%directoryExport%'
+
+  Shanbo\ImmobilierBundle\Service\Export:
+    arguments:
+      $directoryExport: '%directoryExport%'

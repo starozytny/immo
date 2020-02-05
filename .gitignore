@@ -14,3 +14,16 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+/.idea
+
+/public/data
+/public/data/
+
+/public/annonces
+/public/annonces/
+
+/data
+/data/
+
+
