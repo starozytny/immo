@@ -16,6 +16,8 @@
 ###< symfony/phpunit-bridge ###
 
 /.idea
+/.idea/
+.idea
 
 /public/data
 /public/data/
