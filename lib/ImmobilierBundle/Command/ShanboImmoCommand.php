@@ -153,10 +153,32 @@ class ShanboImmoCommand extends Command
             } catch (\Exception $e) {
                 $io->error('Erreur run cmd stats : ' . $e);
             }
+
+            // --------------  SUPPRESSION DU ZIP  -----------------------
+            $archives = scandir($this->PATH_DEPOT);
+            foreach ($archives as $item) {
+                if (preg_match('/([^\s]+(\.(?i)(zip))$)/i', $item, $matches)) {
+                    $io->title('Suppression du Zip ' . $item);
+                    $this->deleteZip($item);
+                    $io->text('Suppression terminée');
+                }
+            }
+
+            // --------------- FIN
+            $io->success('Fin de la commande');
+            return 1;
         }
 
-        $io->success('Fin de la commande.');
-        return 1;
+    }
+
+    /**
+     * Fonction permettant de supprimer les zip dans le dossier depot
+     * @param $archive
+     */
+    protected function deleteZip($archive){
+        if(file_exists($this->PATH_DEPOT . $archive)){
+            unlink($this->PATH_DEPOT . $archive);
+        }
     }
 
     protected function getDirname($item){

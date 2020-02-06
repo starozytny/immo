@@ -3,11 +3,12 @@
 namespace Shanbo\ImmobilierBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
 
 /**
  * @ORM\Entity(repositoryClass="Shanbo\ImmobilierBundle\Repository\ShAdresseRepository")
  */
-class ShAdresse
+class ShAdresse extends DataSanitize
 {
     /**
      * @ORM\Id()
@@ -138,5 +139,14 @@ class ShAdresse
         $this->lon = $lon;
 
         return $this;
+    }
+    public function getSlugVille()
+    {
+        return $this->setSlugVille($this->getVille());
+    }
+
+    public function __toString()
+    {
+        return $this->getCp() . ' ' . $this->getVille() . ' ' . $this->getAdr();
     }
 }
