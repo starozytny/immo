@@ -6,7 +6,7 @@ use Shanbo\ImmobilierBundle\Entity\ShAgence;
 use Shanbo\ImmobilierBundle\Entity\ShBien;
 use Shanbo\ImmobilierBundle\Entity\ShStatAgence;
 use Shanbo\ImmobilierBundle\Entity\ShStatGlobal;
-use Shanbo\ImmobilierBundle\Entity\User;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
