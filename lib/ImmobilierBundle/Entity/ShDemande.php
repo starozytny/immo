@@ -39,7 +39,7 @@ class ShDemande
     /**
      * @ORM\Column(type="datetime")
      */
-    private $create_at;
+    private $createAt;
 
     /**
      * @ORM\Column(type="boolean")
@@ -51,6 +51,11 @@ class ShDemande
      * @ORM\JoinColumn(nullable=false)
      */
     private $bien;
+
+    public function __construct()
+    {
+        $this->setCreateAt(new \DateTime());
+    }
 
     public function getId(): ?int
     {
@@ -107,12 +112,12 @@ class ShDemande
 
     public function getCreateAt(): ?\DateTimeInterface
     {
-        return $this->create_at;
+        return $this->createAt;
     }
 
     public function setCreateAt(\DateTimeInterface $create_at): self
     {
-        $this->create_at = $create_at;
+        $this->createAt = $create_at;
 
         return $this;
     }

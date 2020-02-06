@@ -20,7 +20,7 @@ class ShStatAgence
     /**
      * @ORM\Column(type="datetime")
      */
-    private $create_at;
+    private $createAt;
 
     /**
      * @ORM\Column(type="integer")
@@ -100,12 +100,12 @@ class ShStatAgence
 
     public function getCreateAt(): ?\DateTimeInterface
     {
-        return $this->create_at;
+        return $this->createAt;
     }
 
     public function setCreateAt(\DateTimeInterface $create_at): self
     {
-        $this->create_at = $create_at;
+        $this->createAt = $create_at;
 
         return $this;
     }
