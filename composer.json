@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Shanbo\\ImmobilierBundle\\": "lib/ImmobilierBundle"
+            "Shanbo\\ImmobilierBundle\\": "lib/ImmobilierBundle/"
         }
     }
 }
