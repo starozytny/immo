@@ -36,10 +36,10 @@ class ShanboImmoCommand extends Command
 
     protected $listEntity;
 
-    private EntityManagerInterface $em;
-    private ParameterBagInterface $params;
-    private Import $import;
-    private ImageManager $imageManager;
+    private $em;
+    private $params;
+    private $import;
+    private $imageManager;
 
     public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, Import $import, ImageManager $imageManager)
     {
