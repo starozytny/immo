@@ -44,7 +44,7 @@ class ShDemande
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_seen;
+    private $isSeen;
 
     /**
      * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShBien", inversedBy="demandes")
@@ -119,12 +119,12 @@ class ShDemande
 
     public function getIsSeen(): ?bool
     {
-        return $this->is_seen;
+        return $this->isSeen;
     }
 
     public function setIsSeen(bool $is_seen): self
     {
-        $this->is_seen = $is_seen;
+        $this->isSeen = $is_seen;
 
         return $this;
     }
