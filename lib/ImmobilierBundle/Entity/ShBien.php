@@ -5,11 +5,12 @@ namespace Shanbo\ImmobilierBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
 
 /**
  * @ORM\Entity(repositoryClass="Shanbo\ImmobilierBundle\Repository\ShBienRepository")
  */
-class ShBien
+class ShBien extends DataSanitize
 {
     const TYPE_LOCATION = 0;
     const TYPE_VENTE = 1;
@@ -453,5 +454,26 @@ class ShBien
         }
 
         return $this;
+    }
+
+    public function getSlugTypeAnnonce()
+    {
+        return $this->setSlugAnnonce($this->getCodeTypeAnnonce());
+    }
+
+    public function getSlugTypeBien()
+    {
+        return $this->setSlugBien($this->getCodeTypeBien());
+    }
+
+    public function getSlugRef()
+    {
+        return $this->setSlugRef($this->getRef());
+    }
+
+
+    public function __toString()
+    {
+        return $this->getRef() . ' - ' . $this->getLibelle();
     }
 }
