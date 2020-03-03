@@ -1,6 +1,6 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData\Data;
+namespace Shanbo\ImmobilierBundle\Manager\Import\Data;
 
 
 interface Data

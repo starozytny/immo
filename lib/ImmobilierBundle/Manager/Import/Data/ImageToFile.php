@@ -1,6 +1,6 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData\Data;
+namespace Shanbo\ImmobilierBundle\Manager\Import\Data;
 
 
 use Shanbo\ImmobilierBundle\Manager\Image\ImageManager;
@@ -39,11 +39,11 @@ class ImageToFile
         if($test == 'http'){
             $imageManager = new ImageManager();
 
-            $imageManager->setImgPath($this->pathImg);
+            $imageManager->setPathImg($this->pathImg);
             $filename = $imageManager->downloadImgURL($file, $this->folder);
 
             if ($filename != null){
-                $imageManager->setThumbsPath($this->pathThumbs);
+                $imageManager->setPathThumb($this->pathThumbs);
                 $imageManager->createThumb($file, $filename, $this->folder, $this->pathImg, 150 ,150);
 
                 $this->file = $filename;

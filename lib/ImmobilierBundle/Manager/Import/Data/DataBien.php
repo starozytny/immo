@@ -1,9 +1,9 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData\Data;
+namespace Shanbo\ImmobilierBundle\Manager\Import\Data;
 
 
-use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
+use Shanbo\ImmobilierBundle\Manager\Import\DataSanitize;
 
 class DataBien extends DataSanitize implements Data
 {
@@ -23,9 +23,10 @@ class DataBien extends DataSanitize implements Data
     public function __construct($type, $data)
     {
         if($type == 0){
+            $realRef = $data[1] == null ? uniqid() : $data[1];
             // Bien
-            $this->ref          = $data[1];
-            $this->real_ref     = $data[1];
+            $this->ref          = $realRef;
+            $this->real_ref     = $realRef;
             $this->typeAnnonce  = $data[2];
             $this->typeBien     = $data[3];
             $this->typeT        = $data[17];

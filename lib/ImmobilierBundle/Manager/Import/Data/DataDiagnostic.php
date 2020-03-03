@@ -1,10 +1,9 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData\Data;
+namespace Shanbo\ImmobilierBundle\Manager\Import\Data;
 
 
-use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
-use function Complex\theta;
+use Shanbo\ImmobilierBundle\Manager\Import\DataSanitize;
 
 class DataDiagnostic extends DataSanitize implements Data
 {

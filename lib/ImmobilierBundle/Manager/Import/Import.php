@@ -14,17 +14,16 @@ use Shanbo\ImmobilierBundle\Entity\ShDiagnostic;
 use Shanbo\ImmobilierBundle\Entity\ShFinancier;
 use Shanbo\ImmobilierBundle\Entity\ShImage;
 use Shanbo\ImmobilierBundle\Entity\ShResponsable;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataAdresse;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataAgence;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataBien;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataCaracteristique;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataCommodite;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataCopro;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataDiagnostic;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataFinancier;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataImage;
-use Shanbo\ImmobilierBundle\Manager\ImportData\Data\DataResponsable;
-use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataAdresse;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataAgence;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataBien;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataCaracteristique;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataCommodite;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataCopro;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataDiagnostic;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataFinancier;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataImage;
+use Shanbo\ImmobilierBundle\Manager\Import\Data\DataResponsable;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
@@ -44,7 +43,7 @@ class Import extends DataSanitize
     public function import($type, $folder, $record, $tabPathImg)
     {
         $this->type = $type;
-        $this->record = $this->cleaner($record);
+        $this->record = ($type == 0) ? $this->cleaner($record) : $record;
 
         $bien = $this->createBien($folder);
         if($bien != false){

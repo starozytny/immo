@@ -1,6 +1,6 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData;
+namespace Shanbo\ImmobilierBundle\Manager\Import;
 
 
 use Shanbo\ImmobilierBundle\Entity\ShBien;

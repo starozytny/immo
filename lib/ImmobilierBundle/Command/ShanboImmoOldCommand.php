@@ -41,7 +41,7 @@ class ShanboImmoOldCommand extends Command
 
         $this->exportOldData();
 
-        $io->text('Commande immo old terminée.');
+        $io->comment('Commande immo old terminée.');
         return 1;
     }
 

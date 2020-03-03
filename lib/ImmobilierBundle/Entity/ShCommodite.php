@@ -52,12 +52,12 @@ class ShCommodite
     private $has_piscine;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_parking;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_box;
 
@@ -155,7 +155,7 @@ class ShCommodite
         return $this->nb_parking;
     }
 
-    public function setNbParking(int $nb_parking): self
+    public function setNbParking(?int $nb_parking): self
     {
         $this->nb_parking = $nb_parking;
 
@@ -167,7 +167,7 @@ class ShCommodite
         return $this->nb_box;
     }
 
-    public function setNbBox(int $nb_box): self
+    public function setNbBox(?int $nb_box): self
     {
         $this->nb_box = $nb_box;
 

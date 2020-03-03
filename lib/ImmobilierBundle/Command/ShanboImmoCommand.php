@@ -155,13 +155,22 @@ class ShanboImmoCommand extends Command
                 $io->error('Erreur run cmd stats : ' . $e);
             }
 
-            // --------------  SUPPRESSION DU ZIP  -----------------------
+            // --------------  SUPPRESSION DES ZIP  -----------------------
+            $io->title('Suppresion des ZIPs');
             $archives = scandir($this->PATH_DEPOT);
             foreach ($archives as $item) {
                 if (preg_match('/([^\s]+(\.(?i)(zip))$)/i', $item, $matches)) {
-                    $io->title('Suppression du Zip ' . $item);
                     $this->deleteZip($item);
-                    $io->text('Suppression terminée');
+                    $io->text('Suppression du Zip ' . $item);
+                }
+            }
+            // --------------  SUPPRESSION DES EXTRACTS  -----------------------
+            $io->title('Suppresion des dossiers Extracts');
+            $folders = scandir($this->PATH_EXTRACT);
+            foreach ($folders as $item) {
+                if ($item != "." && $item != "..") {
+                    $this->deleteFolder($this->PATH_EXTRACT . $item);
+                    $io->text('Suppression du folder ' . $item);
                 }
             }
 
@@ -250,7 +259,7 @@ class ShanboImmoCommand extends Command
 
             // Insertion des datas csv dans la DBB
             foreach ($records as $record) {
-                $this->import->import(self::ANNONCE_CSV, $folder, $record, $tabPathImg);
+                $this->import->import($type, $folder, $record, $tabPathImg);
                 $progressBar->advance();
             }
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Shanbo\ImmobilierBundle\Manager\ImportData\Data;
+namespace Shanbo\ImmobilierBundle\Manager\Import\Data;
 
 
-use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
+use Shanbo\ImmobilierBundle\Manager\Import\DataSanitize;
 
 class DataFinancier extends DataSanitize implements Data
 {

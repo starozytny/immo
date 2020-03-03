@@ -37,47 +37,47 @@ class ShCaracteristique
     private $surface_sejour;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_piece;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_chambre;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_sdb;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_se;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_wc;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $is_wc_separe;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_balcon;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $nb_etage;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $etage;
 
@@ -189,7 +189,7 @@ class ShCaracteristique
         return $this->nb_piece;
     }
 
-    public function setNbPiece(int $nb_piece): self
+    public function setNbPiece(?int $nb_piece): self
     {
         $this->nb_piece = $nb_piece;
 
@@ -201,7 +201,7 @@ class ShCaracteristique
         return $this->nb_chambre;
     }
 
-    public function setNbChambre(int $nb_chambre): self
+    public function setNbChambre(?int $nb_chambre): self
     {
         $this->nb_chambre = $nb_chambre;
 
@@ -213,7 +213,7 @@ class ShCaracteristique
         return $this->nb_sdb;
     }
 
-    public function setNbSdb(int $nb_sdb): self
+    public function setNbSdb(?int $nb_sdb): self
     {
         $this->nb_sdb = $nb_sdb;
 
@@ -225,7 +225,7 @@ class ShCaracteristique
         return $this->nb_se;
     }
 
-    public function setNbSe(int $nb_se): self
+    public function setNbSe(?int $nb_se): self
     {
         $this->nb_se = $nb_se;
 
@@ -237,7 +237,7 @@ class ShCaracteristique
         return $this->nb_wc;
     }
 
-    public function setNbWc(int $nb_wc): self
+    public function setNbWc(?int $nb_wc): self
     {
         $this->nb_wc = $nb_wc;
 
@@ -249,7 +249,7 @@ class ShCaracteristique
         return $this->is_wc_separe;
     }
 
-    public function setIsWcSepare(int $is_wc_separe): self
+    public function setIsWcSepare(?int $is_wc_separe): self
     {
         $this->is_wc_separe = $is_wc_separe;
 
@@ -261,7 +261,7 @@ class ShCaracteristique
         return $this->nb_balcon;
     }
 
-    public function setNbBalcon(int $nb_balcon): self
+    public function setNbBalcon(?int $nb_balcon): self
     {
         $this->nb_balcon = $nb_balcon;
 
@@ -273,7 +273,7 @@ class ShCaracteristique
         return $this->nb_etage;
     }
 
-    public function setNbEtage(int $nb_etage): self
+    public function setNbEtage(?int $nb_etage): self
     {
         $this->nb_etage = $nb_etage;
 
@@ -285,7 +285,7 @@ class ShCaracteristique
         return $this->etage;
     }
 
-    public function setEtage(int $etage): self
+    public function setEtage(?int $etage): self
     {
         $this->etage = $etage;
 

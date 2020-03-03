@@ -3,7 +3,6 @@
 namespace Shanbo\ImmobilierBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Shanbo\ImmobilierBundle\Manager\ImportData\DataSanitize;
 
 /**
  * @ORM\Entity(repositoryClass="Shanbo\ImmobilierBundle\Repository\ShAdresseRepository")
