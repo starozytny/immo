@@ -123,6 +123,7 @@ class ShBien extends DataSanitize
 
     /**
      * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShResponsable", inversedBy="shBiens")
+     * @ORM\JoinColumn(nullable=true)
      */
     private $responsable;
 
