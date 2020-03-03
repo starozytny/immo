@@ -2,6 +2,7 @@
 
 namespace Shanbo\ImmobilierBundle\Command;
 
+use PhpOffice\PhpSpreadsheet\Exception;
 use Shanbo\ImmobilierBundle\Manager\Image\ImageManager;
 use Shanbo\ImmobilierBundle\Manager\Import\Import;
 use Doctrine\DBAL\ConnectionException;
@@ -95,6 +96,19 @@ class ShanboImmoCommand extends Command
             $io->error('[AUCUNE ARCHIVE]');
             return 0;
         }else {
+            // --------------  SAVE OLD DATA  -----------------------
+            $io->title('Sauvegarde des anciens identifiants des biens');
+            $command = $this->getApplication()->find('shanbo:immo:old');
+            $arguments = [
+                'command' => 'shanbo:immo:old'
+            ];
+            $greetInput = new ArrayInput($arguments);
+            try {
+                $command->run($greetInput, $output);
+            } catch (\Exception $e) {
+                $io->error('Erreur run cmd old immo : ' . $e);
+            }
+
             // --------------  RESET TABLE  -----------------------
             $io->title('Reset des tables');
             try {
@@ -117,24 +131,11 @@ class ShanboImmoCommand extends Command
                 $this->imageManager->moveImages($folder);
             }
 
-            // --------------  SAVE OLD DATA  -----------------------
-            $io->title('Sauvegarde des anciens identifiants des biens');
-            $command = $this->getApplication()->find('shanbo:immo:old');
-            $arguments = [
-                'command' => 'shanbo:immo:old'
-            ];
-            $greetInput = new ArrayInput($arguments);
-            try {
-                $command->run($greetInput, $output);
-            } catch (\Exception $e) {
-                $io->error('Erreur run cmd old immo : ' . $e);
-            }
-
             // --------------  TRANSFERT DES DATA  -----------------------
             $io->title('Traitement des dossier');
             try {
                 $this->transfertData($folders, $output, $io);
-            } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {$io->error('Error load CSV file : ' . $e);}
+            } catch (Exception $e) {$io->error('Error load CSV file : ' . $e);}
 
             // --------------  TRANSFERT DES ARCHIVES  -----------------------
             $io->title('Création des archives');
@@ -267,7 +268,7 @@ class ShanboImmoCommand extends Command
      * @param array $folders
      * @param $output
      * @param SymfonyStyle $io
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws Exception
      */
     protected function transfertData($folders, $output, SymfonyStyle $io){
         foreach ($folders as $folder) {
@@ -305,7 +306,7 @@ class ShanboImmoCommand extends Command
                     $parseFile = simplexml_load_file($this->PATH_EXTRACT . $folder . "/" . $annonces, 'SimpleXMLElement', LIBXML_NOCDATA);
                     $count = count($parseFile); // Nombre de records
 
-                    $this->traitement(self::ANNONCE_XML, $io, $output, $folder, count($sheetData), $sheetData, $tabPathImg);
+                    $this->traitement(self::ANNONCE_XML, $io, $output, $folder, $count, $parseFile, $tabPathImg);
 
                 } else {
                     $io->error('Aucun fichier annonce trouvé dans le dossier : ' . $folder);
@@ -378,7 +379,7 @@ class ShanboImmoCommand extends Command
             }
         }
         if($isEmpty){
-            $io->error("Aucun zip dans le dossier extract");
+            $io->error("Aucun zip dans le dossier dépot.");
             return 0;
         }
         return $folders;
