@@ -58,7 +58,7 @@ class ShResponsable
         return $this->contact;
     }
 
-    public function setContact(string $contact): self
+    public function setContact(?string $contact): self
     {
         $this->contact = $contact;
 
