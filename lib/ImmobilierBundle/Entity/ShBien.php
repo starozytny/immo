@@ -456,6 +456,60 @@ class ShBien
         return $this;
     }
 
+    public function getSlugTypeAnnonce()
+    {
+        switch ($this->getCodeTypeAnnonce()) {
+            case ShBien::TYPE_LOCATION:
+                return ShBien::SLUG_LOCATION;
+                break;
+            default:
+                return ShBien::SLUG_VENTE;
+                break;
+        }
+    }
+
+    public function getSlugTypeBien()
+    {
+        switch ($this->getCodeTypeBien()) {
+            case ShBien::TYPE_MAISON:
+                return ShBien::SLUG_MAISON;
+                break;
+            case ShBien::TYPE_APPARTEMENT:
+                return ShBien::SLUG_APPARTEMENT;
+                break;
+            case ShBien::TYPE_PARKING:
+                return ShBien::SLUG_PARKING;
+                break;
+            case ShBien::TYPE_BUREAUX:
+                return ShBien::SLUG_BUREAUX;
+                break;
+            case ShBien::TYPE_LOCAL:
+                return ShBien::SLUG_LOCAL;
+                break;
+            case ShBien::TYPE_IMMEUBLE:
+                return ShBien::SLUG_IMMEUBLE;
+                break;
+            case ShBien::TYPE_TERRAIN:
+                return ShBien::SLUG_TERRAIN;
+                break;
+            case ShBien::TYPE_FOND_COMMERCE:
+                return ShBien::SLUG_FOND_COMMERCE;
+                break;
+            default:
+                return ShBien::SLUG_AUTRE;
+                break;
+        }
+    }
+
+    protected function setSlugRef(){
+        $ref = $this->getRef();
+        $pos = strpos($ref,'|');
+        $ref = substr($ref, $pos+1, strlen($ref));
+        $ref = str_replace('/','-',$ref);
+
+        return $ref;
+    }
+
     public function __toString()
     {
         return $this->getRef() . ' - ' . $this->getLibelle();
