@@ -140,7 +140,7 @@ class ShAdresse
         return $this;
     }
 
-    protected function getSlugVille(){
+    public function getSlugVille(){
         $ville = $this->getVille();
         $ville = strtolower($ville);
         $ville = trim($ville);

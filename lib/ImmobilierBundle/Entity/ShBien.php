@@ -501,7 +501,7 @@ class ShBien
         }
     }
 
-    protected function getSlugRef(){
+    public function getSlugRef(){
         $ref = $this->getRef();
         $pos = strpos($ref,'|');
         $ref = substr($ref, $pos+1, strlen($ref));
