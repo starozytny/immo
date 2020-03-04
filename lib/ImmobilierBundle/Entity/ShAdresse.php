@@ -140,6 +140,16 @@ class ShAdresse
         return $this;
     }
 
+    protected function setSlugVille(){
+        $ville = $this->getVille();
+        $ville = strtolower($ville);
+        $ville = trim($ville);
+        $ville = str_replace(' ','-',$ville);
+        $ville = str_replace('/','-',$ville);
+
+        return $ville;
+    }
+
     public function __toString()
     {
         return $this->getCp() . ' ' . $this->getVille() . ' ' . $this->getAdr();
