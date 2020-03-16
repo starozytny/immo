@@ -23,10 +23,10 @@ class DataBien extends DataSanitize implements Data
     public function __construct($type, $data)
     {
         if($type == 0){
-            $realRef = $data[1] == null ? uniqid() : $data[1];
+            $ref = $data[1] == null ? uniqid() : $data[1];
             // Bien
-            $this->ref          = $realRef;
-            $this->real_ref     = $realRef;
+            $this->ref          = $ref;
+            $this->real_ref     = $ref;
             $this->typeAnnonce  = $data[2];
             $this->typeBien     = $data[3];
             $this->typeT        = $data[17];
