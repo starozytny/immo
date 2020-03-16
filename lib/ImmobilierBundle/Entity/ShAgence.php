@@ -69,7 +69,7 @@ class ShAgence
     private $phone_vente;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      */
     private $adresse;

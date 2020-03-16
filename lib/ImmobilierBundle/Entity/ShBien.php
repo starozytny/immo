@@ -23,6 +23,8 @@ class ShBien
     const TYPE_TERRAIN = 6;
     const TYPE_FOND_COMMERCE = 7;
 
+    const ALL_TYPE = array(0,1,2,3,4,5,6,7);
+
     const SLUG_LOCATION = 'locations';
     const SLUG_VENTE = 'ventes';
 
@@ -103,54 +105,54 @@ class ShBien
     private $is_copro;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAgence", inversedBy="biens")
+     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAgence", fetch="EAGER", inversedBy="biens")
      * @ORM\JoinColumn(nullable=false)
      */
     private $agence;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShFinancier", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShFinancier", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $financier;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCopro", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCopro", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $copro;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShResponsable", inversedBy="shBiens")
+     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShResponsable", fetch="EAGER", inversedBy="shBiens")
      * @ORM\JoinColumn(nullable=true)
      */
     private $responsable;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDiagnostic", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDiagnostic", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $diagnostic;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCaracteristique", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCaracteristique", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $caracteristique;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $adresse;
 
     /**
-     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShImage", mappedBy="bien", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShImage", fetch="EAGER", mappedBy="bien", orphanRemoval=true)
      */
     private $images;
 
     /**
-     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDemande", mappedBy="bien", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDemande", fetch="EAGER", mappedBy="bien", orphanRemoval=true)
      */
     private $demandes;
 
@@ -158,7 +160,7 @@ class ShBien
     {
         $this->images = new ArrayCollection();
         $this->demandes = new ArrayCollection();
-        $this->shImages = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int

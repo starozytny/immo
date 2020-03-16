@@ -2,13 +2,15 @@
 
 namespace Shanbo\ImmobilierBundle\Command;
 
+use League\Csv\Reader;
 use PhpOffice\PhpSpreadsheet\Exception;
+use Shanbo\ImmobilierBundle\Entity\ShAdresse;
+use Shanbo\ImmobilierBundle\Entity\ShAgence;
 use Shanbo\ImmobilierBundle\Manager\Image\ImageManager;
 use Shanbo\ImmobilierBundle\Manager\Import\Import;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -277,7 +279,7 @@ class ShanboImmoCommand extends Command
      * @param array $folders
      * @param $output
      * @param SymfonyStyle $io
-     * @throws Exception
+     * @throws \League\Csv\Exception
      */
     protected function transfertData($folders, $output, SymfonyStyle $io){
         foreach ($folders as $folder) {
@@ -292,14 +294,13 @@ class ShanboImmoCommand extends Command
             $fileMaj = $this->PATH_EXTRACT . $folder . '/' . $this->filenameDataMaj;
 
             if (file_exists($file) || file_exists($fileMaj)) {
-
-                $reader = new Csv();
+                $reader = file_exists($file) ? Reader::createFromPath($file) : Reader::createFromPath($fileMaj);
                 $reader->setDelimiter('#');
 
-                $spreadsheet = file_exists($file) ? $reader->load($file) : $reader->load($fileMaj);
-                $sheetData = $spreadsheet->getActiveSheet()->toArray();
+                $records = $reader->getRecords(); // récupération de toutes les lignes
+                $count = count($reader); // Nombre de records
 
-                $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, count($sheetData), $sheetData, $tabPathImg);
+                $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, $count, $records, $tabPathImg);
 
             } else { // XML --- PERICLES
                 $files = scandir($this->PATH_EXTRACT . $folder);
@@ -343,6 +344,20 @@ class ShanboImmoCommand extends Command
             );
             $connection->query('SET FOREIGN_KEY_CHECKS=1');
             $connection->commit();
+        }
+        $agences = $this->em->getRepository(ShAgence::class)->findAll();
+        $adresses = $this->em->getRepository(ShAdresse:: class)->findAll();
+        $tabAdressesId = array();
+        if($agences){
+            foreach ($agences as $agence) {
+                array_push($tabAdressesId, $agence->getAdresse()->getId());
+            }
+        }
+        foreach ($adresses as $adress) {
+            if(!in_array($adress->getId(), $tabAdressesId)){
+                $this->em->remove($adress);
+                $this->em->flush();
+            }
         }
         $io->comment('Reset [OK]');
     }
