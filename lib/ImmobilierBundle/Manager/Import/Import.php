@@ -330,12 +330,13 @@ class Import extends DataSanitize
                     ->setFile($file)
                     ->setRang($i)
                     ->setOrientation(false)
-                    ->setBien($bien)
                 ;
                 if($i == 0){
                     $image->setThumb($thumbs);
                 }
                 $this->em->persist($image);
+                $bien->addImage($image);
+                $this->em->persist($bien);
                 array_push($images, $image);
             }
 
