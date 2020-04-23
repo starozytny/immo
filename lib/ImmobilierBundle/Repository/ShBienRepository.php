@@ -19,6 +19,23 @@ class ShBienRepository extends ServiceEntityRepository
         parent::__construct($registry, ShBien::class);
     }
 
+    /**
+     * @param $value
+     * @param string $sort
+     * @return ShBien[] Returns an array of ShBien objects
+     */
+    public function findByNatureOrderByPrice($value, $sort = 'ASC')
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.nature_code = :val')
+            ->setParameter('val', $value)
+            ->leftJoin('s.financier', 'f')
+            ->orderBy('f.prix', $sort)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return ShBien[] Returns an array of ShBien objects
     //  */

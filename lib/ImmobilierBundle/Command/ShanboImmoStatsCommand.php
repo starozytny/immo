@@ -6,7 +6,7 @@ use Shanbo\ImmobilierBundle\Entity\ShAgence;
 use Shanbo\ImmobilierBundle\Entity\ShBien;
 use Shanbo\ImmobilierBundle\Entity\ShStatAgence;
 use Shanbo\ImmobilierBundle\Entity\ShStatGlobal;
-use App\Entity\Main\User;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,7 +49,7 @@ class ShanboImmoStatsCommand extends Command
             $totMaisons = 0;$totApparts = 0;$totParkings = 0;$totBureaux = 0;
             $totLocaux = 0;$totImmeubles = 0;$totTerrains = 0;$totFonds = 0;$totAutres = 0;
             foreach ($agence->getBiens() as $bien) {
-                if($bien->getCodeTypeAnnonce() == ShBien::TYPE_LOCATION){
+                if($bien->getNatureCode() == ShBien::NATURE_LOCATION){
                     $totalLocations++;
                     $agenceTotalVentes++;
                 }else{
@@ -57,7 +57,7 @@ class ShanboImmoStatsCommand extends Command
                     $agenceTotalLocations++;
                 }
 
-                switch ($bien->getCodeTypeBien()){
+                switch ($bien->getTypeCode()){
                     case ShBien::TYPE_MAISON:
                         $totMaisons++;
                         $totalMaisons++;
