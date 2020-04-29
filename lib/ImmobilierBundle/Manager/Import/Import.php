@@ -244,11 +244,12 @@ class Import extends DataSanitize
 
             $reader = new Csv();
             $oldId = null;
-            if(file_exists($this->getDirectoryExport() . 'biens.csv')){
+            if(file_exists($this->getDirectoryExport() . '/biens.csv')){
                 try {
-                    $spreadsheet = $reader->load($this->getDirectoryExport() . 'biens.csv');
+                    $spreadsheet = $reader->load($this->getDirectoryExport() . '/biens.csv');
                     $sheetData = $spreadsheet->getActiveSheet()->toArray();
                     foreach ($sheetData as $item) {
+
                         if($item[1] == $data->getRealRef() &&
                             $item[2] == $data->getCodeTypeAnnonce() &&
                             $item[3] == $data->getCodeTypeBien() &&

@@ -36,6 +36,40 @@ class ShBienRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @param $nature
+     * @param $types
+     * @param string $priceMin
+     * @param string $priceMax
+     * @param string $surfaceMin
+     * @param string $surfaceMax
+     * @param string $sort
+     * @return ShBien[] Returns an array of ShBien objects
+     */
+    public function findByOrderByPrice($nature, $types, $priceMin='min', $priceMax='max', $surfaceMin='min', $surfaceMax='max', $sort = 'ASC')
+    {
+        $entityManager = $this->getEntityManager();
+        $priceMin = ($priceMin == 'min') ? '' : ' AND f.prix >= ' .$priceMin;
+        $priceMax = ($priceMax == 'max') ? '' : ' AND f.prix <= ' .$priceMax;
+        $surfaceMin = ($surfaceMin == 'min') ? '' : ' AND c.surface >= ' .$surfaceMin;
+        $surfaceMax = ($surfaceMax == 'max') ? '' : ' AND c.surface <= ' .$surfaceMax;
+
+        $q = 'SELECT s
+            FROM Shanbo\ImmobilierBundle\Entity\ShBien s
+            INNER JOIN s.financier f
+            INNER JOIN s.caracteristique c'
+        ;
+        $q .= ' WHERE ';
+        foreach ($types as $type) {
+            $q .= '(s.nature_code = ' . $nature . ' AND s.type_code = ' . $type .$priceMin.$priceMax.$surfaceMin.$surfaceMax.')';
+            $q .= ' or ';
+        }
+        $q = substr($q, 0, - 4);
+        $q .= ' ORDER BY f.prix ' . $sort;
+        $query = $entityManager->createQuery($q);
+        return $query->getResult();
+    }
+
     // /**
     //  * @return ShBien[] Returns an array of ShBien objects
     //  */
