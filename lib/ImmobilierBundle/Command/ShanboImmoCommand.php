@@ -2,6 +2,7 @@
 
 namespace Shanbo\ImmobilierBundle\Command;
 
+use League\Csv\Reader;
 use PhpOffice\PhpSpreadsheet\Exception;
 use Shanbo\ImmobilierBundle\Manager\Image\ImageManager;
 use Shanbo\ImmobilierBundle\Manager\Import\Import;
@@ -292,14 +293,13 @@ class ShanboImmoCommand extends Command
             $fileMaj = $this->PATH_EXTRACT . $folder . '/' . $this->filenameDataMaj;
 
             if (file_exists($file) || file_exists($fileMaj)) {
-
-                $reader = new Csv();
+                $reader = file_exists($file) ? Reader::createFromPath($file) : Reader::createFromPath($fileMaj);
                 $reader->setDelimiter('#');
 
-                $spreadsheet = file_exists($file) ? $reader->load($file) : $reader->load($fileMaj);
-                $sheetData = $spreadsheet->getActiveSheet()->toArray();
+                $records = $reader->getRecords(); // récupération de toutes les lignes
+                $count = count($reader); // Nombre de records
 
-                $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, count($sheetData), $sheetData, $tabPathImg);
+                $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, $count, $records, $tabPathImg);
 
             } else { // XML --- PERICLES
                 $files = scandir($this->PATH_EXTRACT . $folder);
