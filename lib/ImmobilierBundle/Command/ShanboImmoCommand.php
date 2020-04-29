@@ -9,10 +9,10 @@ use Shanbo\ImmobilierBundle\Manager\Import\Import;
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -76,7 +76,9 @@ class ShanboImmoCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription('Import CSV XML to database');
+        $this
+            ->setDescription('Import CSV XML to database')
+            ->addArgument('appel', InputArgument::REQUIRED, '1 si premier appel 0 sinon');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -91,58 +93,9 @@ class ShanboImmoCommand extends Command
         // --------------  RECHERCHE DES ZIP  -----------------------
         $io->title('Recherche et décompression des zips');
         $archives = scandir($this->PATH_DEPOT);
-        $folders = $this->extractZIP($archives, $io);
+        $folders = $this->extractZIP($archives, $io); // exit auto if no folder
 
         if($folders == 0){
-            $io->error('[AUCUNE ARCHIVE]');
-            return 0;
-        }else {
-            // --------------  SAVE OLD DATA  -----------------------
-            $io->title('Sauvegarde des anciens identifiants des biens');
-            $command = $this->getApplication()->find('shanbo:immo:old');
-            $arguments = [
-                'command' => 'shanbo:immo:old'
-            ];
-            $greetInput = new ArrayInput($arguments);
-            try {
-                $command->run($greetInput, $output);
-            } catch (\Exception $e) {
-                $io->error('Erreur run cmd old immo : ' . $e);
-            }
-
-            // --------------  RESET TABLE  -----------------------
-            $io->title('Reset des tables');
-            try {
-                $this->resetTable($io);
-            } catch (ConnectionException $e) {$io->error("ConnectionException : " . $e);
-            } catch (DBALException $e) {$io->error("DBALException : " . $e);}
-
-            // MOVE IMG TO PUBLIC
-            $io->title('Transfert des images');
-            $this->imageManager->setIo($io);
-            $this->imageManager->setPathExtract($this->PATH_EXTRACT);
-            $this->imageManager->setPathImg($this->PATH_IMAGES);
-            $this->imageManager->setPathThumb($this->PATH_THUMBS);
-
-            // Reinitialise les dossiers images
-            foreach ($folders as $folder) {
-                $io->comment('Suppression des images de ' . $folder);
-                $this->deleteFolder($this->PATH_IMAGES . $folder);
-                $this->deleteFolder($this->PATH_THUMBS . $folder);
-                $this->imageManager->moveImages($folder);
-            }
-
-            // --------------  TRANSFERT DES DATA  -----------------------
-            $io->title('Traitement des dossier');
-            try {
-                $this->transfertData($folders, $output, $io);
-            } catch (Exception $e) {$io->error('Error load CSV file : ' . $e);}
-
-            // --------------  TRANSFERT DES ARCHIVES  -----------------------
-            $io->title('Création des archives');
-            $this->archive();
-            $io->comment('Archives terminées');
-
             // --------------  ADD STAT  -----------------------
             $io->title('Sauvegarde des stats');
             $command = $this->getApplication()->find('shanbo:immo:stats');
@@ -156,14 +109,65 @@ class ShanboImmoCommand extends Command
                 $io->error('Erreur run cmd stats : ' . $e);
             }
 
-            // --------------  SUPPRESSION DES ZIP  -----------------------
-            $io->title('Suppresion des ZIPs');
-            $archives = scandir($this->PATH_DEPOT);
-            foreach ($archives as $item) {
-                if (preg_match('/([^\s]+(\.(?i)(zip))$)/i', $item, $matches)) {
-                    $this->deleteZip($item);
-                    $io->text('Suppression du Zip ' . $item);
+            $io->success('Fin de la commande');
+            return 0;
+        }else {
+            $appel = $input->getArgument('appel');
+            // -------------- SI CEST LE PREMIER APPEL  -----------------------
+            if($appel == 1){
+                // --------------  SAVE OLD DATA  -----------------------
+                $io->title('Sauvegarde des anciens identifiants des biens');
+                $command = $this->getApplication()->find('shanbo:immo:old');
+                $arguments = [
+                    'command' => 'shanbo:immo:old'
+                ];
+                $greetInput = new ArrayInput($arguments);
+                try {
+                    $command->run($greetInput, $output);
+                } catch (\Exception $e) {
+                    $io->error('Erreur run cmd old immo : ' . $e);
                 }
+                // --------------  RESET TABLE  -----------------------
+                $io->title('Reset des tables');
+                try {
+                    $this->resetTable($io);
+                } catch (ConnectionException $e) {$io->error("ConnectionException : " . $e);
+                } catch (DBALException $e) {$io->error("DBALException : " . $e);}
+            }
+
+            // --------------  START PROCESS FOLDER  -----------------------
+            $folder = $folders[0]; // get first folder
+            $archive = $folder.'.zip';
+
+            // --------------  MOVE IMG TO PUBLIC  -----------------------
+            $io->title('Transfert des images');
+            $this->imageManager->setIo($io);
+            $this->imageManager->setPathExtract($this->PATH_EXTRACT);
+            $this->imageManager->setPathImg($this->PATH_IMAGES);
+            $this->imageManager->setPathThumb($this->PATH_THUMBS);
+
+            // --------------  Reinitialise les dossiers images du folder  -----------------------
+            $io->comment('Suppression des images de ' . $folder);
+            $this->deleteFolder($this->PATH_IMAGES . $folder);
+            $this->deleteFolder($this->PATH_THUMBS . $folder);
+            $this->imageManager->moveImages($folder);
+
+            // --------------  TRANSFERT DES DATA  -----------------------
+            $io->title('Traitement du dossier');
+            try {
+                $this->transfertData($folder, $output, $io);
+            } catch (Exception $e) {$io->error('Error load CSV file : ' . $e);}
+
+            // --------------  TRANSFERT DES ARCHIVES  -----------------------
+            $io->title('Création des archives');
+            $this->archive($archive);
+            $io->comment('Archives terminées');
+
+            // --------------  SUPPRESSION DES ZIP  -----------------------
+            $io->title('Suppresion du ZIP');
+            if (preg_match('/([^\s]+(\.(?i)(zip))$)/i', $archive, $matches)) {
+                $this->deleteZip($archive);
+                $io->text('Suppression du Zip ' . $archive);
             }
             // --------------  SUPPRESSION DES EXTRACTS  -----------------------
             $io->title('Suppresion des dossiers Extracts');
@@ -175,11 +179,21 @@ class ShanboImmoCommand extends Command
                 }
             }
 
-            // --------------- FIN
-            $io->success('Fin de la commande');
+            $io->success('SUIVANT');
+            $command = $this->getApplication()->find('shanbo:immo');
+            $arguments = [
+                'command' => 'shanbo:immo',
+                'appel' => 0
+            ];
+            $greetInput = new ArrayInput($arguments);
+            try {
+                $command->run($greetInput, $output);
+            } catch (\Exception $e) {
+                $io->error('Erreur run cmd shanbo immo recu : ' . $e);
+            }
+
             return 1;
         }
-
     }
 
     /**
@@ -198,33 +212,31 @@ class ShanboImmoCommand extends Command
         return $nameFolder;
     }
 
-    protected function archive(){
+    protected function archive($archive){
         $pathArchive = $this->PATH_ARCHIVE;
-        $archives = scandir($this->PATH_DEPOT);
 
-        foreach ($archives as $archive) {
-            if(preg_match('/([^\s]+(\.(?i)(zip))$)/i', $archive, $matches)){
+        if(preg_match('/([^\s]+(\.(?i)(zip))$)/i', $archive, $matches)){
 
-                $nameFolder = $this->getDirname($archive);
-                $fileOri = $this->PATH_DEPOT . $archive;
-                $fileOld1 =  $pathArchive . $nameFolder . '_1.zip';
-                $fileOld2 =  $pathArchive . $nameFolder . '_2.zip';
+            $nameFolder = $this->getDirname($archive);
+            $fileOri = $this->PATH_DEPOT . $archive;
+            $fileOld1 =  $pathArchive . $nameFolder . '_1.zip';
+            $fileOld2 =  $pathArchive . $nameFolder . '_2.zip';
 
-                if(file_exists($fileOld2)){
-                    unlink($fileOld2);
-                    copy($fileOld1, $fileOld2);
-                    unlink($fileOld1);
-                }
+            if(file_exists($fileOld2)){
+                unlink($fileOld2);
+                copy($fileOld1, $fileOld2);
+                unlink($fileOld1);
+            }
 
-                if(file_exists($fileOld1)){
-                    copy($fileOld1, $fileOld2);
-                    unlink($fileOld1);
-                    copy($fileOri, $fileOld1);
-                }else{
-                    copy($fileOri, $fileOld1);
-                }
+            if(file_exists($fileOld1)){
+                copy($fileOld1, $fileOld2);
+                unlink($fileOld1);
+                copy($fileOri, $fileOld1);
+            }else{
+                copy($fileOri, $fileOld1);
             }
         }
+
     }
 
     /**
@@ -250,6 +262,7 @@ class ShanboImmoCommand extends Command
      * @param $folder
      * @param $count
      * @param $records
+     * @param $tabPathImg
      */
     protected function traitement($type, SymfonyStyle $io, $output, $folder, $count, $records, $tabPathImg){
         if ($count != 0) {
@@ -275,51 +288,49 @@ class ShanboImmoCommand extends Command
 
     /**
      * Transfert des data d'un folder
-     * @param array $folders
+     * @param $folder
      * @param $output
      * @param SymfonyStyle $io
-     * @throws Exception
+     * @throws \League\Csv\Exception
      */
-    protected function transfertData($folders, $output, SymfonyStyle $io){
-        foreach ($folders as $folder) {
-            $tabPathImg = [
-                'images' => $this->PATH_IMAGES,
-                'thumbs' => $this->PATH_THUMBS
-            ];
+    protected function transfertData($folder, $output, SymfonyStyle $io){
+        $tabPathImg = [
+            'images' => $this->PATH_IMAGES,
+            'thumbs' => $this->PATH_THUMBS
+        ];
 
-            $io->comment('------- Dossier : ' . $folder);
+        $io->comment('------- Dossier : ' . $folder);
 
-            $file = $this->PATH_EXTRACT . $folder . '/' . $this->filenameData;
-            $fileMaj = $this->PATH_EXTRACT . $folder . '/' . $this->filenameDataMaj;
+        $file = $this->PATH_EXTRACT . $folder . '/' . $this->filenameData;
+        $fileMaj = $this->PATH_EXTRACT . $folder . '/' . $this->filenameDataMaj;
 
-            if (file_exists($file) || file_exists($fileMaj)) {
-                $reader = file_exists($file) ? Reader::createFromPath($file) : Reader::createFromPath($fileMaj);
-                $reader->setDelimiter('#');
+        if (file_exists($file) || file_exists($fileMaj)) {
+            $reader = file_exists($file) ? Reader::createFromPath($file) : Reader::createFromPath($fileMaj);
+            $reader->setDelimiter('#');
 
-                $records = $reader->getRecords(); // récupération de toutes les lignes
-                $count = count($reader); // Nombre de records
+            $records = $reader->getRecords(); // récupération de toutes les lignes
+            $count = count($reader); // Nombre de records
 
-                $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, $count, $records, $tabPathImg);
+            $this->traitement(self::ANNONCE_CSV, $io, $output, $folder, $count, $records, $tabPathImg);
 
-            } else { // XML --- PERICLES
-                $files = scandir($this->PATH_EXTRACT . $folder);
-                $isFind = false;
-                foreach ($files as $file) {
-                    if (preg_match('/([^\s]+(\.(?i)(xml))$)/i', $file, $matches)) {
-                        $annonces = $file;
-                        $isFind = true;
-                    }
+        } else { // XML --- PERICLES
+            $files = scandir($this->PATH_EXTRACT . $folder);
+            $isFind = false;
+            foreach ($files as $file) {
+                if (preg_match('/([^\s]+(\.(?i)(xml))$)/i', $file, $matches)) {
+                    $annonces = $file;
+                    $isFind = true;
                 }
+            }
 
-                if ($isFind) {
-                    $parseFile = simplexml_load_file($this->PATH_EXTRACT . $folder . "/" . $annonces, 'SimpleXMLElement', LIBXML_NOCDATA);
-                    $count = count($parseFile); // Nombre de records
+            if ($isFind) {
+                $parseFile = simplexml_load_file($this->PATH_EXTRACT . $folder . "/" . $annonces, 'SimpleXMLElement', LIBXML_NOCDATA);
+                $count = count($parseFile); // Nombre de records
 
-                    $this->traitement(self::ANNONCE_XML, $io, $output, $folder, $count, $parseFile, $tabPathImg);
+                $this->traitement(self::ANNONCE_XML, $io, $output, $folder, $count, $parseFile, $tabPathImg);
 
-                } else {
-                    $io->error('Aucun fichier annonce trouvé dans le dossier : ' . $folder);
-                }
+            } else {
+                $io->error('Aucun fichier annonce trouvé dans le dossier : ' . $folder);
             }
         }
     }
@@ -388,7 +399,7 @@ class ShanboImmoCommand extends Command
             }
         }
         if($isEmpty){
-            $io->error("Aucun zip dans le dossier dépot.");
+            $io->comment("Aucun zip dans le dossier dépot.");
             return 0;
         }
         return $folders;
