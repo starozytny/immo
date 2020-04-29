@@ -456,7 +456,7 @@ class ShBien
         return $this;
     }
 
-    public function getSlugTypeAnnonce()
+    public function getSlugNature()
     {
         switch ($this->getNatureCode()) {
             case ShBien::NATURE_LOCATION:
@@ -468,7 +468,7 @@ class ShBien
         }
     }
 
-    public function getSlugTypeBien()
+    public function getSlugType()
     {
         switch ($this->getTypeCode()) {
             case ShBien::TYPE_MAISON:
