@@ -55,6 +55,7 @@ class ShDemande
     public function __construct()
     {
         $this->setCreateAt(new \DateTime());
+        $this->setIsSeen(false);
     }
 
     public function getId(): ?int

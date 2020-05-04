@@ -11,6 +11,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ShCategorie
 {
+    const LOCATION = 0;
+    const VENTE = 1;
+    const SYNDIC = 2;
+    const GERANCE = 3;
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
