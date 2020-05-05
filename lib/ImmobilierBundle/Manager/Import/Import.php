@@ -334,6 +334,7 @@ class Import extends DataSanitize
                 if($i == 0){
                     $image->setThumb($thumbs);
                 }
+                $bien->setFirstImage($tab[0]->getFile());
                 $this->em->persist($image);
                 array_push($images, $image);
             }

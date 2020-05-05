@@ -98,18 +98,23 @@ class ShBien
     private $identifiant;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $first_image;
+
+    /**
      * @ORM\Column(type="integer")
      */
     private $is_copro;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAgence", inversedBy="biens")
+     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAgence", fetch="EAGER", inversedBy="biens")
      * @ORM\JoinColumn(nullable=false)
      */
     private $agence;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShFinancier", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShFinancier", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $financier;
@@ -133,13 +138,13 @@ class ShBien
     private $diagnostic;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCaracteristique", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShCaracteristique", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $caracteristique;
 
     /**
-     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShAdresse", fetch="EAGER", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $adresse;
@@ -294,6 +299,18 @@ class ShBien
     public function setIdentifiant(string $identifiant): self
     {
         $this->identifiant = $identifiant;
+
+        return $this;
+    }
+
+    public function getFirstImage(): ?string
+    {
+        return $this->first_image;
+    }
+
+    public function setFirstImage(?string $image): self
+    {
+        $this->first_image = $image;
 
         return $this;
     }
