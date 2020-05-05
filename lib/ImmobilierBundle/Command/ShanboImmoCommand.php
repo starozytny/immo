@@ -390,20 +390,22 @@ class ShanboImmoCommand extends Command
      */
     protected function extractZIP($archives, SymfonyStyle $io){
         $isEmpty = true;
+        $isOpen = false;
         $folders = array();
         foreach ($archives as $item) {
             $archive = new ZipArchive();
             if(preg_match('/([^\s]+(\.(?i)(zip))$)/i', $item, $matches)){
                 $isEmpty = false;
-
-                $nameFolder = $this->getDirname($item);
-
                 if($archive->open($this->PATH_DEPOT . $item) == true){
-                    $archive->extractTo($this->PATH_EXTRACT . $nameFolder);
-                    $archive->close(); unset($archive);
-                    $io->comment("Archive " . $nameFolder . " [OK]");
+                    $nameFolder = $this->getDirname($item);
+                    if($isOpen == false){
+                        $archive->extractTo($this->PATH_EXTRACT . $nameFolder);
+                        $archive->close(); unset($archive);
+                        $io->comment("Archive " . $nameFolder . " [OK]");
 
-                    array_push($folders, $nameFolder);
+                        array_push($folders, $nameFolder);
+                        $isOpen = true;
+                    }
                 }else{
                     $io->error("Erreur archive");
                     return 0;
