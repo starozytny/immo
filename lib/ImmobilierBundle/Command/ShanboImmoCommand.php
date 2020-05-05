@@ -137,7 +137,8 @@ class ShanboImmoCommand extends Command
 
             // --------------  START PROCESS FOLDER  -----------------------
             $folder = $folders[0]; // get first folder
-            $archive = $folder.'.zip';
+            $archives = $this->getOriginalArchives($archives);
+            $archive = $archives[0];
 
             // --------------  MOVE IMG TO PUBLIC  -----------------------
             $io->title('Transfert des images');
@@ -160,6 +161,7 @@ class ShanboImmoCommand extends Command
 
             // --------------  TRANSFERT DES ARCHIVES  -----------------------
             $io->title('Création des archives');
+
             $this->archive($archive);
             $io->comment('Archives terminées');
 
@@ -368,6 +370,16 @@ class ShanboImmoCommand extends Command
                 mkdir($directory);
             }
         }
+    }
+
+    protected function getOriginalArchives($archives){
+        $folders = array();
+        foreach ($archives as $item) {
+            if(preg_match('/([^\s]+(\.(?i)(zip))$)/i', $item, $matches)){
+                array_push($folders, $item);
+            }
+        }
+        return $folders;
     }
 
     /**
