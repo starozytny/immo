@@ -90,29 +90,39 @@ class ShanboImmoCommand extends Command
                          $this->PATH_ANNONCES, $this->PATH_IMAGES, $this->PATH_THUMBS);
         $this->createDir($folders);
 
+        // --------------  PROCESSUS  -----------------------
+        $appel = $input->getArgument('appel');
+        $this->process($appel, $io, $output);
+        return 1;
+    }
+
+    protected function process($appel, SymfonyStyle $io, OutputInterface $output)
+    {
         // --------------  RECHERCHE DES ZIP  -----------------------
         $io->title('Recherche et décompression des zips');
         $archives = scandir($this->PATH_DEPOT);
         $folders = $this->extractZIP($archives, $io); // exit auto if no folder
 
         if($folders == 0){
-            // --------------  ADD STAT  -----------------------
-            $io->title('Sauvegarde des stats');
-            $command = $this->getApplication()->find('shanbo:immo:stats');
-            $arguments = [
-                'command' => 'shanbo:immo:stats'
-            ];
-            $greetInput = new ArrayInput($arguments);
-            try {
-                $command->run($greetInput, $output);
-            } catch (\Exception $e) {
-                $io->error('Erreur run cmd stats : ' . $e);
+            if($appel != 1){
+                // --------------  ADD STAT  -----------------------
+                $io->title('Sauvegarde des stats');
+                $command = $this->getApplication()->find('shanbo:immo:stats');
+                $arguments = [
+                    'command' => 'shanbo:immo:stats'
+                ];
+                $greetInput = new ArrayInput($arguments);
+                try {
+                    $command->run($greetInput, $output);
+                } catch (\Exception $e) {
+                    $io->error('Erreur run cmd stats : ' . $e);
+                }
             }
 
             $io->success('Fin de la commande');
             return 0;
         }else {
-            $appel = $input->getArgument('appel');
+
             // -------------- SI CEST LE PREMIER APPEL  -----------------------
             if($appel == 1){
                 // --------------  SAVE OLD DATA  -----------------------
@@ -182,20 +192,10 @@ class ShanboImmoCommand extends Command
             }
 
             $io->success('SUIVANT');
-            $command = $this->getApplication()->find('shanbo:immo');
-            $arguments = [
-                'command' => 'shanbo:immo',
-                'appel' => 0
-            ];
-            $greetInput = new ArrayInput($arguments);
-            try {
-                $command->run($greetInput, $output);
-            } catch (\Exception $e) {
-                $io->error('Erreur run cmd shanbo immo recu : ' . $e);
-            }
-
-            return 1;
+            $this->process(0, $io, $output);
         }
+
+        return 1;
     }
 
     /**
