@@ -175,31 +175,30 @@ class Import extends DataSanitize
             $hasCommo = 0;
         }
 
-        $carac = (new ShCaracteristique())
-            ->setSurface($data->getSurface())
-            ->setSurfaceTerrain($data->getSurfaceTerrain())
-            ->setSurfaceSejour($data->getSurfaceSejour())
-            ->setNbPiece($data->getNbrPiece())
-            ->setNbChambre($data->getNbrChambre())
-            ->setNbSdb($data->getNbrSdb())
-            ->setNbSe($data->getNbrSle())
-            ->setNbWc($data->getNbrWc())
-            ->setIsWcSepare($data->getisWcSepare())
-            ->setNbBalcon($data->getNbrBalcon())
-            ->setNbEtage($data->getNbrEtage())
-            ->setEtage($data->getEtage())
-            ->setIsMeuble($data->getisMeuble())
-            ->setAnneeConstruction($data->getAnneeConstruction())
-            ->setIsRefaitneuf($data->getisRefaitNeuf())
-            ->setTypeChauffage($chauffage)
-            ->setTypeCuisine($cuisine)
-            ->setIsSud($data->getisSud())
-            ->setIsNord($data->getisNord())
-            ->setIsEst($data->getisEst())
-            ->setIsOuest($data->getisOuest())
-            ->setHasCommodite($hasCommo)
-            ->setCommodite($commodite)
-        ;
+        $carac = new ShCaracteristique();
+        $carac->setSurface($data->getSurface());
+        $carac->setSurfaceTerrain($data->getSurfaceTerrain());
+        $carac->setSurfaceSejour($data->getSurfaceSejour());
+        $carac->setNbPiece($data->getNbrPiece());
+        $carac->setNbChambre($data->getNbrChambre());
+        $carac->setNbSdb($data->getNbrSdb());
+        $carac->setNbSe($data->getNbrSle());
+        $carac->setNbWc($data->getNbrWc());
+        $carac->setIsWcSepare($data->getisWcSepare());
+        $carac->setNbBalcon($data->getNbrBalcon());
+        $carac->setNbEtage($data->getNbrEtage());
+        $carac->setEtage($data->getEtage());
+        $carac->setIsMeuble($data->getisMeuble());
+        $carac->setAnneeConstruction($data->getAnneeConstruction());
+        $carac->setIsRefaitneuf($data->getisRefaitNeuf());
+        $carac->setTypeChauffage($chauffage);
+        $carac->setTypeCuisine($cuisine);
+        $carac->setIsSud($data->getisSud());
+        $carac->setIsNord($data->getisNord());
+        $carac->setIsEst($data->getisEst());
+        $carac->setIsOuest($data->getisOuest());
+        $carac->setHasCommodite($hasCommo);
+        $carac->setCommodite($commodite);
 
         $this->em->persist($carac);
 
@@ -245,11 +244,12 @@ class Import extends DataSanitize
 
             $reader = new Csv();
             $oldId = null;
-            if(file_exists($this->getDirectoryExport() . 'biens.csv')){
+            if(file_exists($this->getDirectoryExport() . '/biens.csv')){
                 try {
-                    $spreadsheet = $reader->load($this->getDirectoryExport() . 'biens.csv');
+                    $spreadsheet = $reader->load($this->getDirectoryExport() . '/biens.csv');
                     $sheetData = $spreadsheet->getActiveSheet()->toArray();
                     foreach ($sheetData as $item) {
+
                         if($item[1] == $data->getRealRef() &&
                             $item[2] == $data->getCodeTypeAnnonce() &&
                             $item[3] == $data->getCodeTypeBien() &&
@@ -265,27 +265,26 @@ class Import extends DataSanitize
                 }
             }
 
-            $bien = (new ShBien())
-                ->setRef($ref)
-                ->setTypeAnnonce($data->getTypeAnnonce())
-                ->setTypeBien($data->getTypeBien())
-                ->setTypeT($data->getTypeT())
-                ->setLibelle($data->getLibelle())
-                ->setDescriptif($data->getDescriptif())
-                ->setDateDispo($data->getDispo())
-                ->setCodeTypeAnnonce($data->getCodeTypeAnnonce())
-                ->setCodeTypeBien($data->getCodeTypeBien())
-                ->setAgence($agence)
-                ->setFinancier($financier)
-                ->setCopro($copro)
-                ->setResponsable($responsable)
-                ->setDiagnostic($diagnostic)
-                ->setCaracteristique($carac)
-                ->setAdresse($adresse)
-                ->setRealRef($data->getRef())
-                ->setIsCopro($data->getIsCopro())
-                ->setIdentifiant(uniqid($agence->getId().$data->getCodeTypeAnnonce().$data->getCodeTypeBien()))
-            ;
+            $bien = new ShBien();
+            $bien->setRef($ref);
+            $bien->setNature($data->getTypeAnnonce());
+            $bien->setType($data->getTypeBien());
+            $bien->setTypeT($data->getTypeT());
+            $bien->setLibelle($data->getLibelle());
+            $bien->setDescriptif($data->getDescriptif());
+            $bien->setDateDispo($data->getDispo());
+            $bien->setNatureCode($data->getCodeTypeAnnonce());
+            $bien->setTypeCode($data->getCodeTypeBien());
+            $bien->setAgence($agence);
+            $bien->setFinancier($financier);
+            $bien->setCopro($copro);
+            $bien->setResponsable($responsable);
+            $bien->setDiagnostic($diagnostic);
+            $bien->setCaracteristique($carac);
+            $bien->setAdresse($adresse);
+            $bien->setRealRef($data->getRef());
+            $bien->setIsCopro($data->getIsCopro());
+            $bien->setIdentifiant(uniqid($agence->getId().$data->getCodeTypeAnnonce().$data->getCodeTypeBien()));
 
             if($oldId != null){
                 $bien->setIdentifiant($oldId);
@@ -334,6 +333,7 @@ class Import extends DataSanitize
                 if($i == 0){
                     $image->setThumb($thumbs);
                 }
+                $bien->setFirstImage($tab[0]->getFile());
                 $this->em->persist($image);
                 $bien->addImage($image);
                 $this->em->persist($bien);

@@ -515,10 +515,10 @@ abstract class DataSanitize
     {
         switch ($item) {
             case 'Location':
-                return ShBien::TYPE_LOCATION;
+                return ShBien::NATURE_LOCATION;
                 break;
             default:
-                return ShBien::TYPE_VENTE;
+                return ShBien::NATURE_VENTE;
                 break;
         }
     }

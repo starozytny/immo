@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ShBien
 {
-    const TYPE_LOCATION = 0;
-    const TYPE_VENTE = 1;
+    const NATURE_LOCATION = 0;
+    const NATURE_VENTE = 1;
 
     const TYPE_MAISON = 0;
     const TYPE_APPARTEMENT = 1;
@@ -57,22 +57,22 @@ class ShBien
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $type_annonce;
+    private $nature;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $code_type_annonce;
+    private $nature_code;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $type_bien;
+    private $type;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $code_type_bien;
+    private $type_code;
 
     /**
      * @ORM\Column(type="string", length=5, nullable=true)
@@ -98,6 +98,11 @@ class ShBien
      * @ORM\Column(type="string", length=255)
      */
     private $identifiant;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $first_image;
 
     /**
      * @ORM\Column(type="integer")
@@ -192,50 +197,50 @@ class ShBien
         return $this;
     }
 
-    public function getTypeAnnonce(): ?string
+    public function getNature(): ?string
     {
-        return $this->type_annonce;
+        return $this->nature;
     }
 
-    public function setTypeAnnonce(?string $type_annonce): self
+    public function setNature(?string $nature): self
     {
-        $this->type_annonce = $type_annonce;
+        $this->nature = $nature;
 
         return $this;
     }
 
-    public function getCodeTypeAnnonce(): ?int
+    public function getNatureCode(): ?int
     {
-        return $this->code_type_annonce;
+        return $this->nature_code;
     }
 
-    public function setCodeTypeAnnonce(int $code_type_annonce): self
+    public function setNatureCode(int $nature_code): self
     {
-        $this->code_type_annonce = $code_type_annonce;
+        $this->nature_code = $nature_code;
 
         return $this;
     }
 
-    public function getTypeBien(): ?string
+    public function getType(): ?string
     {
-        return $this->type_bien;
+        return $this->type;
     }
 
-    public function setTypeBien(string $type_bien): self
+    public function setType(string $type_bien): self
     {
-        $this->type_bien = $type_bien;
+        $this->type = $type_bien;
 
         return $this;
     }
 
-    public function getCodeTypeBien(): ?int
+    public function getTypeCode(): ?int
     {
-        return $this->code_type_bien;
+        return $this->type_code;
     }
 
-    public function setCodeTypeBien(int $code_type_bien): self
+    public function setTypeCode(int $code_type_bien): self
     {
-        $this->code_type_bien = $code_type_bien;
+        $this->type_code = $code_type_bien;
 
         return $this;
     }
@@ -296,6 +301,18 @@ class ShBien
     public function setIdentifiant(string $identifiant): self
     {
         $this->identifiant = $identifiant;
+
+        return $this;
+    }
+
+    public function getFirstImage(): ?string
+    {
+        return $this->first_image;
+    }
+
+    public function setFirstImage(?string $image): self
+    {
+        $this->first_image = $image;
 
         return $this;
     }
@@ -458,10 +475,10 @@ class ShBien
         return $this;
     }
 
-    public function getSlugTypeAnnonce()
+    public function getSlugNature()
     {
-        switch ($this->getCodeTypeAnnonce()) {
-            case ShBien::TYPE_LOCATION:
+        switch ($this->getNatureCode()) {
+            case ShBien::NATURE_LOCATION:
                 return ShBien::SLUG_LOCATION;
                 break;
             default:
@@ -470,9 +487,9 @@ class ShBien
         }
     }
 
-    public function getSlugTypeBien()
+    public function getSlugType()
     {
-        switch ($this->getCodeTypeBien()) {
+        switch ($this->getTypeCode()) {
             case ShBien::TYPE_MAISON:
                 return ShBien::SLUG_MAISON;
                 break;

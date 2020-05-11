@@ -54,8 +54,8 @@ class ShanboImmoOldCommand extends Command
             $tmp = array(
                 $bien->getIdentifiant(),
                 $bien->getRealRef(),
-                $bien->getCodeTypeAnnonce(),
-                $bien->getCodeTypeBien(),
+                $bien->getNatureCode(),
+                $bien->getTypeCode(),
                 $bien->getAgence()->getDirname()
             );
 
