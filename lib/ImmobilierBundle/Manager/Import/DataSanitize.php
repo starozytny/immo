@@ -160,7 +160,8 @@ abstract class DataSanitize
         $c = substr($data, 4,2);
         $d = substr($data, 6,2);
         $e = substr($data, 8,2);
-        $data = $a . $b .$c .$d .$e;
+        
+        $data = $a . $b . $c . $d . $e;
         $data = trim($data);
         if($data == ""){
             return null;

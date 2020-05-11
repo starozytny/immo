@@ -4,6 +4,8 @@ namespace Shanbo\ImmobilierBundle\Command;
 
 use League\Csv\Reader;
 use PhpOffice\PhpSpreadsheet\Exception;
+use Shanbo\ImmobilierBundle\Entity\ShAdresse;
+use Shanbo\ImmobilierBundle\Entity\ShAgence;
 use Shanbo\ImmobilierBundle\Manager\Image\ImageManager;
 use Shanbo\ImmobilierBundle\Manager\Import\Import;
 use Doctrine\DBAL\ConnectionException;
@@ -356,6 +358,20 @@ class ShanboImmoCommand extends Command
             );
             $connection->query('SET FOREIGN_KEY_CHECKS=1');
             $connection->commit();
+        }
+        $agences = $this->em->getRepository(ShAgence::class)->findAll();
+        $adresses = $this->em->getRepository(ShAdresse:: class)->findAll();
+        $tabAdressesId = array();
+        if($agences){
+            foreach ($agences as $agence) {
+                array_push($tabAdressesId, $agence->getAdresse()->getId());
+            }
+        }
+        foreach ($adresses as $adress) {
+            if(!in_array($adress->getId(), $tabAdressesId)){
+                $this->em->remove($adress);
+                $this->em->flush();
+            }
         }
         $io->comment('Reset [OK]');
     }
