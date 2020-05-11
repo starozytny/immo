@@ -34,6 +34,11 @@ class ShAgence
     private $description;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $legales;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $logo;
@@ -133,6 +138,18 @@ class ShAgence
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getLegales(): ?string
+    {
+        return $this->legales;
+    }
+
+    public function setLegales(?string $legales): self
+    {
+        $this->legales = $legales;
 
         return $this;
     }

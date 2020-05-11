@@ -110,6 +110,7 @@ class ImmoAgencesCommand extends Command
         $agence->setTarif($this->setToNullIfEmpty($record[17]));
         $agence->setDescription($record[18]);
         $agence->setPhoneStandard($this->setToNullIfEmpty($record[19]));
+        $agence->setLegales($record[20]);
 
 
         if($record[7] != ""){ // adr
