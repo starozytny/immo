@@ -152,12 +152,12 @@ class ShBien
     private $adresse;
 
     /**
-     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShImage", fetch="EAGER", mappedBy="bien", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShImage", mappedBy="bien", orphanRemoval=true)
      */
     private $images;
 
     /**
-     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDemande", fetch="EAGER", mappedBy="bien", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDemande", mappedBy="bien", orphanRemoval=true)
      */
     private $demandes;
 
