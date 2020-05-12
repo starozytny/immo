@@ -71,7 +71,6 @@ class ShanboImmoCommand extends Command
             'sh_responsable',
             'sh_caracteristique',
             'sh_commodite',
-            'sh_adresse',
             'sh_image'
         ];
     }
@@ -346,19 +345,6 @@ class ShanboImmoCommand extends Command
      * @throws DBALException
      */
     protected function resetTable(SymfonyStyle $io){
-        foreach ($this->listEntity as $item) {
-            $connection = $this->em->getConnection();
-
-            $connection->beginTransaction();
-            $connection->query('SET FOREIGN_KEY_CHECKS=0');
-            $connection->executeUpdate(
-                $connection->getDatabasePlatform()->getTruncateTableSQL(
-                    $item, true
-                )
-            );
-            $connection->query('SET FOREIGN_KEY_CHECKS=1');
-            $connection->commit();
-        }
         $agences = $this->em->getRepository(ShAgence::class)->findAll();
         $adresses = $this->em->getRepository(ShAdresse:: class)->findAll();
         $tabAdressesId = array();
@@ -372,6 +358,19 @@ class ShanboImmoCommand extends Command
                 $this->em->remove($adress);
                 $this->em->flush();
             }
+        }
+        foreach ($this->listEntity as $item) {
+            $connection = $this->em->getConnection();
+
+            $connection->beginTransaction();
+            $connection->query('SET FOREIGN_KEY_CHECKS=0');
+            $connection->executeUpdate(
+                $connection->getDatabasePlatform()->getTruncateTableSQL(
+                    $item, true
+                )
+            );
+            $connection->query('SET FOREIGN_KEY_CHECKS=1');
+            $connection->commit();
         }
         $io->comment('Reset [OK]');
     }
