@@ -143,7 +143,7 @@ class ImageManager
         $nameWithoutExt = pathinfo($srcPath . $folder . '/' .$item)['filename'];
         $name = $nameWithoutExt . '-thumbs.jpg';
 
-        @imagejpeg($thumb, $this->path_thumb . $folder . "/" . $name);
+        @imagejpeg($thumb, $this->path_thumb . $folder . "/" . $name,75);
     }
 
     /**
