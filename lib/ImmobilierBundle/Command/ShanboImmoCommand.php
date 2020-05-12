@@ -348,6 +348,7 @@ class ShanboImmoCommand extends Command
         $agences = $this->em->getRepository(ShAgence::class)->findAll();
         $adresses = $this->em->getRepository(ShAdresse:: class)->findAll();
         $tabAdressesId = array();
+        $toDelete = array();
         if($agences){
             foreach ($agences as $agence) {
                 array_push($tabAdressesId, $agence->getAdresse()->getId());
@@ -355,8 +356,7 @@ class ShanboImmoCommand extends Command
         }
         foreach ($adresses as $adress) {
             if(!in_array($adress->getId(), $tabAdressesId)){
-                $this->em->remove($adress);
-                $this->em->flush();
+                array_push($toDelete, $adress);
             }
         }
         foreach ($this->listEntity as $item) {
@@ -371,6 +371,12 @@ class ShanboImmoCommand extends Command
             );
             $connection->query('SET FOREIGN_KEY_CHECKS=1');
             $connection->commit();
+        }
+        if(!empty($toDelete)){
+            foreach ($toDelete as $item) {
+                $this->em->remove($item);
+                $this->em->flush();
+            }
         }
         $io->comment('Reset [OK]');
     }

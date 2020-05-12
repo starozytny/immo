@@ -46,7 +46,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "Shanbo\\ImmobilierBundle\\": "lib/ImmobilierBundle/"
         }
     },
     "autoload-dev": {
