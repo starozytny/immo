@@ -134,9 +134,9 @@ abstract class DataSanitize
      * @return bool|int
      */
     protected function convertToTrilean($data){
-        if( $data == "NON" || $data == null || $data == "Non" || $data == "" || $data == "0"){
+        if( $data == "NON" || $data == "Non" || $data == "0"){
             return false;
-        }else if( $data == "N.C" ){
+        }else if( $data == "N.C" || $data == null || $data == ""){
             return 3;
         }else{
             return true;
@@ -160,7 +160,7 @@ abstract class DataSanitize
         $c = substr($data, 4,2);
         $d = substr($data, 6,2);
         $e = substr($data, 8,2);
-        
+
         $data = $a . $b . $c . $d . $e;
         $data = trim($data);
         if($data == ""){
