@@ -226,7 +226,7 @@ class ShAgence
     
     public function getEmailVente(): ?string
     {
-        return $this->email;
+        return $this->email_vente;
     }
 
     public function setEmailVente(?string $email): self
