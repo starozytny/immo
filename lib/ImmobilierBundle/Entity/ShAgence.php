@@ -93,6 +93,16 @@ class ShAgence
      * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShStatAgence", mappedBy="agence")
      */
     private $stats;
+    
+        /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email_location;
+    
+        /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email_vente;
 
     public function __construct()
     {
@@ -198,6 +208,30 @@ class ShAgence
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+    
+    public function getEmailLocation(): ?string
+    {
+        return $this->email_location;
+    }
+
+    public function setEmailLocation(?string $email): self
+    {
+        $this->email_location = $email;
+
+        return $this;
+    }
+    
+    public function getEmailVente(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmailVente(?string $email): self
+    {
+        $this->email_vente = $email;
 
         return $this;
     }

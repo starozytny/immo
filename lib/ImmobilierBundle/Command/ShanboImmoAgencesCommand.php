@@ -111,6 +111,8 @@ class ShanboImmoAgencesCommand extends Command
         $agence->setDescription($record[18]);
         $agence->setPhoneStandard($this->setToNullIfEmpty($record[19]));
         $agence->setLegales($record[20]);
+        $agence->setEmailLocation($this->setToNullIfEmpty($record[21]));
+        $agence->setEmailVente($this->setToNullIfEmpty($record[22]));
 
 
         if($record[7] != ""){ // adr
