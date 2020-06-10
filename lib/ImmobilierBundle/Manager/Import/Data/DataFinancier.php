@@ -78,8 +78,8 @@ class DataFinancier extends DataSanitize implements Data
             $this->modalitesChargesLocataire        = null;
             $this->complementLoyer                  = null;
             $this->partHonoEdl                      = (float) $data['price']['inventory'];
-            $this->bouquet                          = $data['category'] == '5' ? (float) $data['price']['value'] : null;
-            $this->rente                            = null;
+            $this->bouquet                          = $data['category'] == '5' ? (float) $data['price']['contribution'] : null;
+            $this->rente                            = $data['price']['pension'] ? $data['price']['pension'] : null;
         }
     }
 

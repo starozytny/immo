@@ -28,9 +28,21 @@ class DataCopro extends DataSanitize implements Data
             $this->hasProced                = $data->PROCEDURE_SYNDICAT;
             $this->detailsProced            = $data->DETAIL_PROCEDURE;
         }else{
-            $this->isCopro                  = null;
-            $this->nbLot                    = null;
-            $this->chargesAnnuelle          = null;
+
+            $nblot=0;$copro=null;$chargesAnnuelles=0;
+            foreach($data['residence'] as $residence){
+                $copro=true;
+                $nblot += $residence['lots'];
+                if($residence['period'] == '8'){
+                    $chargesAnnuelles += $residence['fees'];
+                }elseif($residence['period'] == '4'){
+                    $chargesAnnuelles += $residence['fees']*12;
+                }
+            }
+
+            $this->isCopro                  = $copro;
+            $this->nbLot                    = $nblot;
+            $this->chargesAnnuelle          = $chargesAnnuelles;
             $this->hasProced                = null;
             $this->detailsProced            = null;
         }
