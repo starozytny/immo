@@ -195,17 +195,16 @@ class ShanboImmoCommand extends Command
 
             if($appel == 1){
                  // --------------  API IMMO JSON  -----------------------
-                 $io->title("[APIMO JSON]");
-
-                 $folder = 'agenadeguilles';
-                 $ch = curl_init();
-                 curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.getenv('APIMMO_AGENCY').'/properties');
-                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                 curl_setopt($ch, CURLOPT_USERPWD, getenv('APIMMO_PROVIDER') .':' . getenv('APIMMO_TOKEN'));
-                 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                 $outputJSON = curl_exec($ch);
-                 curl_close($ch);
-                 $values = json_decode($outputJSON, true);
+                $io->title("[APIMO JSON]");
+                $folder = 'agenadeguilles';
+                $ch = curl_init();                
+                curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.$_ENV['APIMMO_AGENCY'].'/properties');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_USERPWD, $_ENV['APIMMO_PROVIDER'] .':' . $_ENV['APIMMO_TOKEN']);
+                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+                $outputJSON = curl_exec($ch);
+                curl_close($ch);
+                $values = json_decode($outputJSON, true);
 
                 if($values){
                     $tabPathImg = [
