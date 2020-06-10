@@ -24,13 +24,20 @@ class DataAdresse extends DataSanitize implements Data
             $this->quartier     = $data[8];
             $this->lat          = $data[297];
             $this->lon          = $data[298];
-        }else{
+        }elseif($type == 1){
             $this->cp           = $data->CP_OFFRE;
             $this->ville        = $data->VILLE_OFFRE;
             $this->adr          = $data->ADRESSE1_OFFRE;
             $this->quartier     = $data->QUARTIER;
             $this->lat          = 0;
             $this->lon          = 0;
+        }else{
+            $this->cp           = $data['city']['zipcode'] ? $data['city']['zipcode'] : '13510';
+            $this->ville        = $data['city']['name'];
+            $this->adr          = $data['address'];
+            $this->quartier     = $data['district']['name'];
+            $this->lat          = $data['latitude'];
+            $this->lon          = $data['longitude'];
         }
 
         $this->setVille($this->capitalize($this->ville));

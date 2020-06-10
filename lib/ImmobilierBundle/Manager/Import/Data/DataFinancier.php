@@ -39,7 +39,7 @@ class DataFinancier extends DataSanitize implements Data
             $this->honoChargesDe = $this->setStringHonoChargesDe($this->honoChargesDe);
             $this->modalitesChargesLocataire = $this->setStringModalitesChargesLocataire($this->modalitesChargesLocataire);
 
-        }else{
+        }elseif($type == 1){
 
             $tabSpecial = $this->setDataXml($data);
 
@@ -57,6 +57,29 @@ class DataFinancier extends DataSanitize implements Data
             $this->bouquet                          = null;
             $this->rente                            = null;
 
+        }else{
+
+            $taxeFonciere=null;
+            foreach($data['services'] as $service){
+                switch($service){
+                    case '22':
+                        $taxeFonciere = $service['value'];
+                        break;
+                }
+            }
+
+            $this->prix                             = (float) $data['price']['value'] + (float) $data['price']['fees'];
+            $this->honoraires                       = (float) $data['price']['commission'];
+            $this->charges                          = (float) $data['price']['fees'];
+            $this->foncier                          = (float) $taxeFonciere;
+            $this->depotGarantie                    = (float) $data['price']['deposit'];
+            $this->honoChargesDe                    = null;
+            $this->horsHonoAcquereur                = null;
+            $this->modalitesChargesLocataire        = null;
+            $this->complementLoyer                  = null;
+            $this->partHonoEdl                      = (float) $data['price']['inventory'];
+            $this->bouquet                          = $data['category'] == '5' ? (float) $data['price']['value'] : null;
+            $this->rente                            = null;
         }
     }
 

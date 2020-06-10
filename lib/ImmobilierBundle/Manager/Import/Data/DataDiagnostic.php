@@ -20,7 +20,7 @@ class DataDiagnostic extends DataSanitize implements Data
             $this->dpelettre            = $data[176];
             $this->gesval               = $data[177];
             $this->geslettre            = $data[178];
-        }else{
+        }elseif($type == 1){
             $this->dpeval               = (int) $data->DPE_VAL1;
             $this->dpelettre            = $data->DPE_ETIQ1;
             $this->gesval               = (int) $data->DPE_VAL2;
@@ -36,7 +36,54 @@ class DataDiagnostic extends DataSanitize implements Data
             if($this->geslettre == null && $this->getGesval() == 0){
                 $this->setGesval(null);
             }
+        }else{
+            $dpe=null;$ges=null;$ldpe=null;$lges=null;
+            foreach($data['regulations'] as $regulation){
+                if($regulation['type'] == '1'){
+                    $dpe = intval($regulation['value']);
+                    if($dpe <= 50){
+                        $ldpe = "A";
+                    }elseif($dpe >= 51 && $dpe <= 90){
+                        $ldpe = "B";
+                    }elseif($dpe >= 91 && $dpe <= 150){
+                        $ldpe = "C";
+                    }elseif($dpe >= 151 && $dpe <= 230){
+                        $ldpe = "D";
+                    }elseif($dpe >= 231 && $dpe <= 330){
+                        $ldpe = "E";
+                    }elseif($dpe >= 331 && $dpe <= 450){
+                        $ldpe = "F";
+                    }elseif($dpe >= 451){
+                        $ldpe = "G";
+                    }
+                }
+                
+                if($regulation['type'] == '2'){
+                    $ges = intval($regulation['value']);
+                    if($ges <= 5){
+                        $lges = "A";
+                    }elseif($ges >= 6 && $ges <= 10){
+                        $lges = "B";
+                    }elseif($ges >= 11 && $ges <= 20){
+                        $lges = "C";
+                    }elseif($ges >= 21 && $ges <= 35){
+                        $lges = "D";
+                    }elseif($ges >= 36 && $ges <= 55){
+                        $lges = "E";
+                    }elseif($ges >= 56 && $ges <= 80){
+                        $lges = "F";
+                    }elseif($ges >= 81){
+                        $lges = "G";
+                    }
+                }
+            }
+            $this->dpeval               = $dpe;
+            $this->dpelettre            = $ldpe;
+            $this->gesval               = $ges;
+            $this->geslettre            = $lges;
         }
+
+        
         if($this->dpelettre == "V"){
             $this->setDpelettre('VI');
         }

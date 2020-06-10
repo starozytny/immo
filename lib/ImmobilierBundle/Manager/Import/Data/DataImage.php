@@ -28,7 +28,7 @@ class DataImage extends DataSanitize
                 new ImageToFile($data[91], $tabPathImg, $folder),
                 new ImageToFile($data[92], $tabPathImg, $folder)
             ];
-        }else{
+        }elseif($type == 1){
             $nameImg = $data->CODE_SOCIETE . "-" . $data->CODE_SITE . "-" . $data->NO_ASP;
             $this->images = [
                 new ImageToFile($nameImg . "-a.jpg", $tabPathImg, $folder),
@@ -42,6 +42,11 @@ class DataImage extends DataSanitize
                 new ImageToFile($nameImg . "-i.jpg", $tabPathImg, $folder),
                 new ImageToFile($nameImg . "-j.jpg", $tabPathImg, $folder)
             ];
+        }else{
+            $this->images = array();
+            foreach($data['pictures'] as $image){
+                array_push($this->images, new ImageToFile($image['url'], $tabPathImg, $folder));
+            }
         }
     }
 

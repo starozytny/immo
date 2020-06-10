@@ -67,7 +67,7 @@ class DataCaracteristique extends DataSanitize implements Data
             $this->setChauffage($this->setStringChauffage($this->chauffage));
             $this->setCuisine($this->setStringCuisine($this->cuisine));
 
-        }else{
+        }elseif($type == 1){
             $this->surface              = (float) $data->SURF_HAB;
             $this->surfaceTerrain       = (float) $data->SURF_TERRAIN;
             $this->surfaceSejour        = (float) $data->SURF_SEJOUR;
@@ -92,6 +92,111 @@ class DataCaracteristique extends DataSanitize implements Data
 
             $this->setChauffage($this->capitalize($this->chauffage));
             $this->setCuisine($this->capitalize($this->cuisine));
+        }else{
+            $properties = $data['areas'];
+
+            $terrain=null;$sejour=null;$sdb=null;$sde=null;$wc=null;$balcon=null;$cuisine = "";
+            $wcSepare = 3;
+            foreach($properties as $item){
+                $number = intval($item['number']);
+                $area = intval($item['area']);
+
+                switch($item['type']){
+                    case '51':
+                        $terrain = $area;
+                        break;
+                    case '20':
+                        $sejour = $area;
+                        break;
+                    case '8':
+                        $sdb = $number;
+                        break;
+                    case '13':
+                        $sde = $number;
+                        break;
+                    case '16':
+                        $wc = $number;
+                        break;
+                    case '41':
+                    case '42':
+                        $wcSepare = false;
+                        break;
+                    case '43':
+                        $balcon = $number;
+                        break;
+                    case '3':
+                        foreach($item['comments'] as $comments){
+                            $cuisine .= ' ' . $comments['comment'];                 
+                        }
+                        break;
+                }
+                if($cuisine == ""){$cuisine = null;}
+            }
+
+            $chauffage='';
+            $chauffageDevice = array(
+                '', 'Convecteur', 'Au sol', 'Radiateur', 'Poêle', 'Climatisation', 'Central', 'Sans chauffage'
+            );
+            $chauffageAccess = array(
+                '', 'Individuel', 'Collectif', 'Mixte', 'Urbain'
+            );
+            $chauffageType = array(
+                '', 'Gaz', 'Fioul / Mazout', 'électrique', 'Bois', 'Solaire', 'Charbon', 'Pompe à chaleur', 'Géothermie', 'Granulé de bois', 'Eau chaude', 'Aérothermie'
+            );
+            $cDevice = !$data['heating']['device'] ? 0 : $data['heating']['device'];
+            $cAccess = !$data['heating']['access'] ? 0 : $data['heating']['access'];
+            $cType = !$data['heating']['type'] ? 0 : $data['heating']['type'];
+            $chauffage = $chauffageDevice[$cDevice] . ' ' . strtolower($chauffageAccess[$cAccess]) . ' ' . strtolower($chauffageType[$cType]);
+            $chauffage = utf8_decode(ucfirst(trim($chauffage)));
+            if($chauffage == ""){$chauffage = null;}
+
+            $est=3;$nord=3;$ouest=3;$sud=3;
+            foreach($data['orientations'] as $ori){
+                switch($ori){
+                    case 1:
+                        $est = 1;
+                        break;
+                    case 2:
+                        $nord = 1;
+                        break;
+                    case 3:
+                        $ouest = 1;
+                        break;
+                    case 4:
+                        $sud = 1;
+                        break;
+                }
+            }
+
+            $this->surface              = $data['area']['value'];
+            $this->surfaceTerrain       = $terrain;
+            $this->surfaceSejour        = $sejour;
+            $this->nbrPiece             = $data['rooms'];
+            $this->nbrChambre           = $data['bedrooms'];
+            $this->nbrSdb               = $sdb;
+            $this->nbrSle               = $sde;
+            $this->nbrWc                = $wc;
+            $this->isWcSepare           = $wcSepare;
+            $this->nbrBalcon            = $balcon;
+            $this->nbrEtage             = $data['floor']['levels'];
+            $this->etage                = $data['floor']['value'];
+            $this->isMeuble             = $data['subcategory'];
+            $this->anneeConstruction    = $data['construction']['construction_year'];
+            $this->isRefaitNeuf         = $data['condition'] ? $data['condition'] : 3;
+            $this->chauffage            = $chauffage;
+            $this->cuisine              = $cuisine;
+            $this->isSud                = $sud;
+            $this->isEst                = $est;
+            $this->isOuest              = $ouest;
+            $this->isNord               = $nord;
+
+            if($this->isMeuble == "21"){
+                $this->setIsMeuble(0);
+            }elseif($this->isMeuble == "22"){
+                $this->setIsMeuble(1);
+            }else{
+                $this->setIsMeuble(3);
+            }
         }
 
 
