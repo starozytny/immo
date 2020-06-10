@@ -128,6 +128,7 @@ class DataCaracteristique extends DataSanitize implements Data
                         foreach($item['comments'] as $comments){
                             $cuisine .= ' ' . $comments['comment'];                 
                         }
+                        $cuisine = utf8_decode(ucfirst(trim(strtolower($cuisine))));
                         break;
                 }
                 if($cuisine == ""){$cuisine = null;}
