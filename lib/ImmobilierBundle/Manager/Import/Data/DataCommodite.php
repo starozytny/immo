@@ -30,7 +30,7 @@ class DataCommodite extends DataSanitize implements Data
             $this->hasPiscine           = $data[64];
             $this->nbParking            = $data[42];
             $this->nbBox                = $data[43];
-        }else{
+        }elseif($type == 1){
             $this->hasAscenceur         = $data->ASCENSEUR;
             $this->hasCave              = $data->NB_CAVES;
             $this->hasInterphone        = $data->INTERPHONE;
@@ -40,6 +40,56 @@ class DataCommodite extends DataSanitize implements Data
             $this->hasPiscine           = $data->PISCINE;
             $this->nbParking            = (int) $data->NB_PARK_INT + (int) $data->NB_PARK_EXT;
             $this->nbBox                = (int) $data->GARAGE_BOX;
+        }else{
+
+            $ascenseur=3;$cave=3;$interphone=3;$gardien=3;$terrasse=3;$piscine=3;$nbParking=null;$nbBox=null;
+            foreach($data['services'] as $service){
+                switch($service){
+                    case '6':
+                        $ascenseur = 1;
+                        break;
+                    case '9':
+                        $interphone = 1;
+                        break;
+                    case '7':
+                        $gardien = 1;
+                        break;
+                    case '11':
+                        $piscine = 1;
+                        break;
+                }
+            }
+
+            foreach($data['areas'] as $area){
+                switch($area){
+                    case '6':
+                        $cave = 1;
+                        break;
+                    case '18':
+                        $cave = 1;
+                        break;
+                    case '5':
+                    case '74':
+                    case '75':
+                        if($nbParking==null){$nbParking=0;}
+                        $nbParking += $area['number'];
+                        break;
+                    case '85':
+                        if($nbBox==null){$nbBox=0;}
+                        $nbBox += $area['number'];
+                        break;
+                }
+            }
+
+            $this->hasAscenceur         = $ascenseur;
+            $this->hasCave              = $cave;
+            $this->hasInterphone        = $interphone;
+            $this->hasGardien           = $gardien;
+            $this->hasTerrasse          = $terrasse;
+            $this->hasClim              = 3;
+            $this->hasPiscine           = $piscine;
+            $this->nbParking            = $nbParking;
+            $this->nbBox                = $nbBox;
         }
 
         $this->setHasAscenceur($this->convertToTrilean($this->hasAscenceur));

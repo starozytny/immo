@@ -29,6 +29,7 @@ class ShanboImmoCommand extends Command
 
     const ANNONCE_CSV = 0;
     const ANNONCE_XML = 1;
+    const ANNONCE_JSON = 2;
 
     protected $PATH_DATA;
     protected $PATH_DEPOT;
@@ -104,6 +105,12 @@ class ShanboImmoCommand extends Command
         $archives = scandir($this->PATH_DEPOT);
         $folders = $this->extractZIP($archives, $io); // exit auto if no folder
 
+        // --------------  SET VAR FOR IMAGEMANAGER  -----------------------
+        $this->imageManager->setIo($io);
+        $this->imageManager->setPathExtract($this->PATH_EXTRACT);
+        $this->imageManager->setPathImg($this->PATH_IMAGES);
+        $this->imageManager->setPathThumb($this->PATH_THUMBS);
+
         if($folders == 0){
             if($appel != 1){
                 // --------------  ADD STAT  -----------------------
@@ -151,17 +158,11 @@ class ShanboImmoCommand extends Command
             $archives = $this->getOriginalArchives($archives);
             $archive = $archives[0];
 
-            // --------------  MOVE IMG TO PUBLIC  -----------------------
-            $io->title('Transfert des images');
-            $this->imageManager->setIo($io);
-            $this->imageManager->setPathExtract($this->PATH_EXTRACT);
-            $this->imageManager->setPathImg($this->PATH_IMAGES);
-            $this->imageManager->setPathThumb($this->PATH_THUMBS);
-
-            // --------------  Reinitialise les dossiers images du folder  -----------------------
+            // --------------  Reinitialise les dossiers images du folder + MOVE IMG TO PUBLIC  -----------------------
             $io->comment('Suppression des images de ' . $folder);
             $this->deleteFolder($this->PATH_IMAGES . $folder);
             $this->deleteFolder($this->PATH_THUMBS . $folder);
+            $io->title('Transfert des images');
             $this->imageManager->moveImages($folder);
 
             // --------------  TRANSFERT DES DATA  -----------------------
@@ -189,6 +190,32 @@ class ShanboImmoCommand extends Command
                 if ($item != "." && $item != "..") {
                     $this->deleteFolder($this->PATH_EXTRACT . $item);
                     $io->text('Suppression du folder ' . $item);
+                }
+            }
+
+            if($appel == 1){
+                 // --------------  API IMMO JSON  -----------------------
+                 $io->title("[APIMO JSON]");
+
+                 $folder = 'ade';
+                 $ch = curl_init();
+                 curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.getenv('APIMMO_AGENCY').'/properties');
+                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                 curl_setopt($ch, CURLOPT_USERPWD, getenv('APIMMO_PROVIDER') .':' . getenv('APIMMO_TOKEN'));
+                 curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+                 $outputJSON = curl_exec($ch);
+                 curl_close($ch);
+                 $values = json_decode($outputJSON, true);
+
+                if($values){
+                    $tabPathImg = [
+                        'images' => $this->PATH_IMAGES,
+                        'thumbs' => $this->PATH_THUMBS
+                    ];
+        
+                    $this->traitement(self::ANNONCE_JSON, $io, $output, $folder, intval($values['total_items']), $values['properties'], $tabPathImg);
+                }else{
+                    $io->error('Aucune données pour APIMMO : ADE Immobiliere');
                 }
             }
 

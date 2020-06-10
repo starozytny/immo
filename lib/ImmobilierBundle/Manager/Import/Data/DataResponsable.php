@@ -19,11 +19,19 @@ class DataResponsable extends DataSanitize implements Data
             $this->tel                  = $data[104];
             $this->email                = $data[106];
             $this->codeNego             = $data[122];
-        }else{
+        }elseif($type == 1){
             $this->contact              = $data->CONTACT;
             $this->tel                  = $data->INFO_CONTACT;
             $this->email                = $data->MAIL_AGENCE;
             $this->codeNego             = $data->NEGOCIATEUR;
+        }else{
+            $phone = str_replace('+33', '0', $data['user']['phone']);
+            $mobile = str_replace('+33', '0', $data['user']['mobile']);
+            
+            $this->contact              = ucfirst($data['user']['firstname']) . " " . strtoupper($data['user']['lastname']);
+            $this->tel                  = $phone ? $phone : ($mobile ? $mobile : '');;
+            $this->email                = $data['user']['email'] ? $data['user']['email'] : null;
+            $this->codeNego             = null;
         }
         $this->setTel($this->formattedTel($this->tel));
     }

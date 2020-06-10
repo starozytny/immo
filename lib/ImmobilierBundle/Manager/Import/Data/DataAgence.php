@@ -14,13 +14,14 @@ class DataAgence extends DataSanitize
     {
         if($type == 0){
             $this->setAgenceName($this->capitalize($data[0]));
-        }else{
+        }elseif($type == 1){
             if($data->RS_AGENCE == ""){
                 $this->setAgenceName($folder);
             }else{
                 $this->setAgenceName($this->capitalize($data->RS_AGENCE));
             }
-
+        }else{
+            $this->setAgenceName('ADE Immobilier');
         }
 
         $this->setDirname($folder);

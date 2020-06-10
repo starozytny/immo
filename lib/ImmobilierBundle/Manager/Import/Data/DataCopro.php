@@ -21,12 +21,18 @@ class DataCopro extends DataSanitize implements Data
             $this->chargesAnnuelle          = $data[259];
             $this->hasProced                = $data[260];
             $this->detailsProced            = $data[261];
-        }else{
+        }elseif($type == 1){
             $this->isCopro                  = $data->COPROPRIETE;
             $this->nbLot                    = (int) $data->NB_LOTS_COPROPRIETE;
             $this->chargesAnnuelle          = (float) $data->MONTANT_QUOTE_PART;
             $this->hasProced                = $data->PROCEDURE_SYNDICAT;
             $this->detailsProced            = $data->DETAIL_PROCEDURE;
+        }else{
+            $this->isCopro                  = null;
+            $this->nbLot                    = null;
+            $this->chargesAnnuelle          = null;
+            $this->hasProced                = null;
+            $this->detailsProced            = null;
         }
 
         $this->setIsCopro($this->convertToTrilean($this->isCopro));

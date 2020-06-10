@@ -134,9 +134,9 @@ abstract class DataSanitize
      * @return bool|int
      */
     protected function convertToTrilean($data){
-        if( $data == "NON" || $data == "Non" || $data == "0"){
+        if( $data == "NON" || $data == "Non" || $data == "0" || $data == 0){
             return false;
-        }else if( $data == "N.C" || $data == null || $data == ""){
+        }else if( $data == "N.C" || $data == null || $data == "" || $data == 3 || $data == "3"){
             return 3;
         }else{
             return true;
@@ -509,6 +509,27 @@ abstract class DataSanitize
 
     public function specialCaracChauffageXML($item){
         return str_replace('electricite', 'électrique', $item);
+    }
+
+    public function apimoAnnonce($item)
+    {
+        $tab = array('', 'Vente', 'Location', 'Location saisonnière', 'Programme', 'Viager', 'Enchère');
+        return $tab[$item];
+    }
+
+    public function apimoType($item)
+    {
+        $tab = array('', 'Appartement', 'Maison', '	Terrain', '	Commerce', 'Parking', 'Immeuble', 'Bureau', 'Bateau', 'Local', 'Parking');
+        return $tab[$item];
+    }
+
+    public function apimoDescriptif($item)
+    {
+        $descriptif = "";
+        foreach($item as $i){
+            $descriptif .= $i['comment'];   
+        }
+        return trim($descriptif);
     }
 
     protected function setCodeAnnonce($item)

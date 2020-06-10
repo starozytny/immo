@@ -49,7 +49,7 @@ class Import extends DataSanitize
         if($bien != false){
             $this->createImage($folder, $tabPathImg, $bien);
         }
-        $this->em->flush();
+        $this->em->flush();     
     }
 
     protected function createAgence($folder)

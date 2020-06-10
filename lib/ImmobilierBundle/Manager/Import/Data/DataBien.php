@@ -37,7 +37,7 @@ class DataBien extends DataSanitize implements Data
             $this->setTypeAnnonce($this->capitalize($this->typeAnnonce));
             $this->setTypeBien($this->capitalize($this->typeBien));
 
-        }else{
+        }elseif($type == 1){
 
             $tabSpecial = $this->setDataXml($data);
 
@@ -49,6 +49,21 @@ class DataBien extends DataSanitize implements Data
             $this->descriptif   = $data->TEXTE_FR;
             $this->dispo        = $data->DATE_DISPO;
             $this->isCopro      = $data->COPROPRIETE;
+        }else{
+            $ref = $data['reference'] == null ? uniqid() : $data['reference'];
+            // Bien
+            $this->ref          = trim($ref);
+            $this->real_ref     = trim($ref);
+            $this->typeAnnonce  = $data['category'];
+            $this->typeBien     = $data['type'];
+            $this->typeT        = $data['rooms'];
+            $this->descriptif   = $data['comments'];
+            $this->dispo        = $data['available_at'];
+            $this->isCopro      = 3;
+
+            $this->setTypeAnnonce($this->apimoAnnonce($this->typeAnnonce));
+            $this->setTypeBien($this->apimoType($this->typeBien));
+            $this->setDescriptif($this->apimoDescriptif($this->descriptif));
         }
 
         $this->setIsCopro($this->convertToTrilean($this->isCopro));
@@ -61,7 +76,12 @@ class DataBien extends DataSanitize implements Data
         $this->setLibelle($this->typeBien . " " . $this->typeT);
         $this->setDispo($this->setToNullIfEmpty($this->dispo));
         if($this->getDispo() != null){
-            $newDate = \DateTime::createFromFormat('d/m/Y', $this->getDispo());
+            if($type == 2){
+                $newDate = \DateTime::createFromFormat('Y-m-d', $this->getDispo());
+            }else{
+                $newDate = \DateTime::createFromFormat('d/m/Y', $this->getDispo());
+            }
+            
             $this->setDispo($newDate);
         }
 
