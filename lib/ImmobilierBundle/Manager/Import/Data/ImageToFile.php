@@ -36,7 +36,7 @@ class ImageToFile
     public function setFile($file): void
     {
         $test = substr($file, 0,4);
-        if($test == 'http'){
+        if($test == 'http' || $test == 'https'){
             $imageManager = new ImageManager();
 
             $imageManager->setPathImg($this->pathImg);

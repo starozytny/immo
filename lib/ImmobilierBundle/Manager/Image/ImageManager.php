@@ -154,6 +154,12 @@ class ImageManager
      */
     public function downloadImgURL($file, $folder){
         try{
+            if(!is_dir($this->path_img . $folder)){
+                mkdir($this->path_img . $folder);
+            }
+            if(!is_dir($this->path_thumb . $folder)){
+                mkdir($this->path_thumb . $folder);
+            }
             $current = file_get_contents($file);
             $filename = substr($file, strripos($file, "/")+1 , strlen($file));
             $file = $this->path_img . $folder . '/' .$filename;
