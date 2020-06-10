@@ -197,7 +197,7 @@ class ShanboImmoCommand extends Command
                  // --------------  API IMMO JSON  -----------------------
                  $io->title("[APIMO JSON]");
 
-                 $folder = 'ade';
+                 $folder = 'agenadeguilles';
                  $ch = curl_init();
                  curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.getenv('APIMMO_AGENCY').'/properties');
                  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
