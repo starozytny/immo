@@ -570,6 +570,7 @@ abstract class DataSanitize
             case 'Terrain':
                 return ShBien::TYPE_TERRAIN;
                 break;
+            case 'Commerce':
             case 'Fond de commerce':
                 return ShBien::TYPE_FOND_COMMERCE;
                 break;
