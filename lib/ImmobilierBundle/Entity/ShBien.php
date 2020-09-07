@@ -156,11 +156,6 @@ class ShBien
      */
     private $images;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Shanbo\ImmobilierBundle\Entity\ShDemande", mappedBy="bien", orphanRemoval=true)
-     */
-    private $demandes;
-
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -438,37 +433,6 @@ class ShBien
             // set the owning side to null (unless already changed)
             if ($image->getBien() === $this) {
                 $image->setBien(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|ShDemande[]
-     */
-    public function getDemandes(): Collection
-    {
-        return $this->demandes;
-    }
-
-    public function addDemande(ShDemande $demande): self
-    {
-        if (!$this->demandes->contains($demande)) {
-            $this->demandes[] = $demande;
-            $demande->setBien($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDemande(ShDemande $demande): self
-    {
-        if ($this->demandes->contains($demande)) {
-            $this->demandes->removeElement($demande);
-            // set the owning side to null (unless already changed)
-            if ($demande->getBien() === $this) {
-                $demande->setBien(null);
             }
         }
 

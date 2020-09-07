@@ -47,8 +47,7 @@ class ShDemande
     private $isSeen;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Shanbo\ImmobilierBundle\Entity\ShBien", inversedBy="demandes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $bien;
 
@@ -135,12 +134,12 @@ class ShDemande
         return $this;
     }
 
-    public function getBien(): ?ShBien
+    public function getBien(): ?string
     {
         return $this->bien;
     }
 
-    public function setBien(?ShBien $bien): self
+    public function setBien(string $bien): self
     {
         $this->bien = $bien;
 
