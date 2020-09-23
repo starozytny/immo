@@ -80,7 +80,8 @@ class ShanboImmoCommand extends Command
     {
         $this
             ->setDescription('Import CSV XML to database')
-            ->addArgument('appel', InputArgument::REQUIRED, '1 si premier appel 0 sinon');
+            ->addArgument('appel', InputArgument::REQUIRED, '1 si premier appel 0 sinon')
+            ->addArgument('apiImmo', InputArgument::OPTIONAL, 'si renseigné oui');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -94,11 +95,13 @@ class ShanboImmoCommand extends Command
 
         // --------------  PROCESSUS  -----------------------
         $appel = $input->getArgument('appel');
-        $this->process($appel, $io, $output);
+        $apiImmo = $input->getArgument('apiImmo');
+        $apiImmo = ($apiImmo) ? true : false;
+        $this->process($appel, $io, $output, $apiImmo);
         return 1;
     }
 
-    protected function process($appel, SymfonyStyle $io, OutputInterface $output)
+    protected function process($appel, SymfonyStyle $io, OutputInterface $output, $apiImmo)
     {
         // --------------  RECHERCHE DES ZIP  -----------------------
         $io->title('Recherche et décompression des zips');
@@ -194,32 +197,34 @@ class ShanboImmoCommand extends Command
             }
 
             if($appel == 1){
-                 // --------------  API IMMO JSON  -----------------------
-                $io->title("[APIMO JSON]");
-                $folder = 'agenadeguilles';
-                $ch = curl_init();                
-                curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.$_ENV['APIMMO_AGENCY'].'/properties');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_USERPWD, $_ENV['APIMMO_PROVIDER'] .':' . $_ENV['APIMMO_TOKEN']);
-                curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                $outputJSON = curl_exec($ch);
-                curl_close($ch);
-                $values = json_decode($outputJSON, true);
-
-                if($values){
-                    $tabPathImg = [
-                        'images' => $this->PATH_IMAGES,
-                        'thumbs' => $this->PATH_THUMBS
-                    ];
-        
-                    $this->traitement(self::ANNONCE_JSON, $io, $output, $folder, intval($values['total_items']), $values['properties'], $tabPathImg);
-                }else{
-                    $io->error('Aucune données pour APIMMO : ADE Immobiliere');
+                // --------------  API IMMO JSON  -----------------------
+                if($apiImmo){
+                    $io->title("[APIMO JSON]");
+                    $folder = 'agenadeguilles';
+                    $ch = curl_init();                
+                    curl_setopt($ch, CURLOPT_URL, 'https://api.apimo.pro/agencies/'.$_ENV['APIMMO_AGENCY'].'/properties');
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_USERPWD, $_ENV['APIMMO_PROVIDER'] .':' . $_ENV['APIMMO_TOKEN']);
+                    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+                    $outputJSON = curl_exec($ch);
+                    curl_close($ch);
+                    $values = json_decode($outputJSON, true);
+    
+                    if($values){
+                        $tabPathImg = [
+                            'images' => $this->PATH_IMAGES,
+                            'thumbs' => $this->PATH_THUMBS
+                        ];
+            
+                        $this->traitement(self::ANNONCE_JSON, $io, $output, $folder, intval($values['total_items']), $values['properties'], $tabPathImg);
+                    }else{
+                        $io->error('Aucune données pour APIMMO : ADE Immobiliere');
+                    }
                 }
             }
 
             $io->success('SUIVANT');
-            $this->process(0, $io, $output);
+            $this->process(0, $io, $output, $apiImmo);
         }
 
         return 1;
@@ -377,7 +382,9 @@ class ShanboImmoCommand extends Command
         $toDelete = array();
         if($agences){
             foreach ($agences as $agence) {
-                array_push($tabAdressesId, $agence->getAdresse()->getId());
+                if($agence->getAdresse()){
+                    array_push($tabAdressesId, $agence->getAdresse()->getId());
+                }
             }
         }
         foreach ($adresses as $adress) {
