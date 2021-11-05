@@ -1,5 +1,5 @@
 {
-    "name": "shanbo/recaptcha",
+    "name": "shanbo/immo",
     "type": "symfony-bundle",
     "license": "proprietary",
     "require": {
